@@ -26,9 +26,11 @@ public class UserCharacter {
     private User user;
 
     @ManyToOne
-    private Character chatacter;
+    @JoinColumn(name = "character_id", nullable = false)
+    private Character character;
 
     @OneToOne
+    @JoinColumn(name = "reference_id", nullable = false)
     private Preference preference;
 
 }
