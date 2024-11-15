@@ -21,4 +21,14 @@ public class UserCharacter {
     @Column
     private String userCharacterName;
 
+    @OneToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @ManyToOne
+    private Character chatacter;
+
+    @OneToOne
+    private Preference preference;
+
 }
