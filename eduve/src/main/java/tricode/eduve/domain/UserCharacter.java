@@ -14,7 +14,7 @@ import lombok.Setter;
 public class UserCharacter {
 
     @Id
-    @Column(name = "userCharacter_id", nullable = false)
+    @Column(name = "user_character_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userCharacterId;
 
@@ -27,10 +27,10 @@ public class UserCharacter {
 
     @ManyToOne
     @JoinColumn(name = "character_id", nullable = false)
-    private Character character;
+    private AllCharacter character;
 
     @OneToOne
-    @JoinColumn(name = "reference_id", nullable = false)
+    @JoinColumn(name = "preference_id", nullable = false)
     private Preference preference;
 
 }

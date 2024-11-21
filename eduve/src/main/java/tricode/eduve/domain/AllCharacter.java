@@ -8,21 +8,18 @@ import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Character {
+public class AllCharacter {
 
     @Id
-    @Column(name = "character_id", nullable = false)
+    @Column(name = "all_character_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long characterId;
+    private Long allCharacterId;
 
     @Column(nullable = false)
     private String characterName;
-
 }
