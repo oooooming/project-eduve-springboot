@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/eduve-backend.iml" filepath="$PROJECT_DIR$/.idea/eduve-backend.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/eduve.main.iml" filepath="$PROJECT_DIR$/.idea/modules/eduve.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/eduve.test.iml" filepath="$PROJECT_DIR$/.idea/modules/eduve.test.iml" />
     </modules>
   </component>
 </project>
