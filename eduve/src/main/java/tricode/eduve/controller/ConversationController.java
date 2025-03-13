@@ -3,12 +3,14 @@ package tricode.eduve.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import tricode.eduve.domain.Conversation;
+import tricode.eduve.domain.Message;
 import tricode.eduve.dto.MessageRequestDto;
 import tricode.eduve.dto.MessageResponseDto;
 import tricode.eduve.service.ChatService;
 import tricode.eduve.service.ConversationService;
 
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -26,11 +28,9 @@ public class ConversationController {
         return ResponseEntity.ok(conversationService.startConversation(requestDto));
     }
 
-
-
     // 비동기 처리
     // 1. 질문을 받고 비동기 처리 시작
-    @PostMapping("/start/...비동기어쩌구")
+    @PostMapping("/start/async")
     public ResponseEntity<Map<String, Object>> askQuestion(@RequestBody MessageRequestDto requestDto) {
         return ResponseEntity.ok(conversationService.startConversationAsync(requestDto));
     }
@@ -41,19 +41,19 @@ public class ConversationController {
         return ResponseEntity.ok(chatService.getAnswer(messageId));
     }
 
+    // 특정 사용자의 대화 목록 조회
+    @GetMapping("/{userId}")
+    public ResponseEntity<List<Conversation>> getUserConversations(@PathVariable Long userId) {
+        return ResponseEntity.ok(conversationService.getUserConversations(userId));
+    }
 
-//    // 특정 사용자의 대화 목록 조회
-//    @GetMapping("/{userId}")
-//    public ResponseEntity<List<Conversation>> getUserConversations(@PathVariable Long userId) {
-//        return ResponseEntity.ok(conversationService.getUserConversations(userId));
-//    }
-//
-//    // 특정 대화의 메시지 목록 조회
-//    @GetMapping("/{conversationId}/messages")
-//    public ResponseEntity<List<Message>> getMessagesByConversationId(@PathVariable Long conversationId) {
-//        return ResponseEntity.ok(conversationService.getMessagesByConversationId(conversationId));
-//    }
-//
+    // 특정 대화의 메시지 목록 조회
+    @GetMapping("/{conversationId}/messages")
+    public ResponseEntity<List<Message>> getMessagesByConversationId(@PathVariable Long conversationId) {
+        return ResponseEntity.ok(conversationService.getMessagesByConversationId(conversationId));
+    }
+
+
 //    // 대화에 메시지 추가
 //    @PostMapping("/{conversationId}/messages")
 //    public ResponseEntity<Message> addMessage(@PathVariable Long conversationId, @RequestParam String content) {
