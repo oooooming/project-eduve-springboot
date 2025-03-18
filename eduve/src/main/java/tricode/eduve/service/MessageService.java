@@ -3,10 +3,8 @@ package tricode.eduve.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import tricode.eduve.domain.Message;
-import tricode.eduve.dto.MessageRequestDto;
+import tricode.eduve.dto.request.MessageRequestDto;
 import tricode.eduve.repository.MessageRepository;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

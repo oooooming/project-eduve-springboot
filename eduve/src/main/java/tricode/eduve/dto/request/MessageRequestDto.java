@@ -1,4 +1,4 @@
-package tricode.eduve.dto;
+package tricode.eduve.dto.request;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;

@@ -1,9 +1,11 @@
 package tricode.eduve.global;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+@RequiredArgsConstructor
 @Component
 public class ChatGptClient {
 
@@ -16,7 +18,7 @@ public class ChatGptClient {
         this.restTemplate = new RestTemplate();
     }
 
-    public String getChatGptResponse(String question) {
+    public String getChatGptResponse(String question, String similarDocuments) {
         // 요청 헤더 설정
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -27,6 +29,7 @@ public class ChatGptClient {
                 "  \"model\": \"gpt-3.5-turbo\",\n" +
                 "  \"messages\": [\n" +
                 "    {\"role\": \"user\", \"content\": \"" + question + "\"}\n" +
+                // similarDocuments 추가
                 "  ]\n" +
                 "}";
 

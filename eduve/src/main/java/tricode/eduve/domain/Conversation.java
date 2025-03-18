@@ -21,6 +21,9 @@ public class Conversation extends CreatedTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long ConversationId;
 
+    @Column(name = "conversation_name",  nullable = false)
+    private String ConversationName;
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;

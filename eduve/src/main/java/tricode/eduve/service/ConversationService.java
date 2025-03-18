@@ -7,11 +7,14 @@ import org.springframework.stereotype.Service;
 import tricode.eduve.domain.Conversation;
 import tricode.eduve.domain.Message;
 import tricode.eduve.domain.User;
-import tricode.eduve.dto.MessageRequestDto;
-import tricode.eduve.dto.MessageResponseDto;
+import tricode.eduve.dto.response.ConversationResponseDto;
+import tricode.eduve.dto.request.MessageRequestDto;
+import tricode.eduve.dto.MessageUnitDto;
+import tricode.eduve.dto.response.MessagesResponseDto;
 import tricode.eduve.global.FlaskComponent;
 import tricode.eduve.repository.ConversationRepository;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,20 +30,17 @@ public class ConversationService {
     private final UserService userService;
     private final ConversationRepository conversationRepository;
 
-    public MessageResponseDto startConversation(MessageRequestDto requestDto) {
+    public MessageUnitDto startConversation(MessageRequestDto requestDto) {
         
         // 유사도 검색 로직
-        flaskComponent.findSimilarDocuments(requestDto.getQuestion());
+        String similarDocuments = flaskComponent.findSimilarDocuments(requestDto.getQuestion());
         
-        Message message = chatService.processQuestion(requestDto);
-        return MessageResponseDto.from(message);
+        Message message = chatService.processQuestion(requestDto, similarDocuments);
+        return MessageUnitDto.from(message);
     }
 
     // 비동기식
     public Map<String, Object> startConversationAsync(MessageRequestDto requestDto) {
-        
-        // 유사도 검색 로직
-        // 이거를 processQuestionAsync안에 넣어서 같이 비동기로 해야될 것 같은데
         
         Long messageId = chatService.processQuestionAsync(requestDto);
 
@@ -52,14 +52,23 @@ public class ConversationService {
     }
 
 
-    public List<Conversation> getUserConversations(Long userId) {
+    public List<ConversationResponseDto> getUserConversations(Long userId) {
         User user = userService.findById(userId);
-        return conversationRepository.findAllByUser(user);
+        List<Conversation> conversationList = conversationRepository.findAllByUser(user);
+        return ConversationResponseDto.from(conversationList);
     }
 
-    public List<Message> getMessagesByConversationId(Long conversationId) {
+
+    public MessagesResponseDto getMessagesByConversationId(Long conversationId) {
         Conversation conversation = conversationRepository.findById(conversationId)
                 .orElseThrow();
-        return conversation.getMessages();
+        List<Message> messages = conversation.getMessages();
+        List<MessageUnitDto> messageUnitDtos = new ArrayList<>();
+        for(Message message : messages) {
+            messageUnitDtos.add(
+                    MessageUnitDto.from(message)
+            );
+        }
+        return MessagesResponseDto.of(conversation, messageUnitDtos);
     }
 }
