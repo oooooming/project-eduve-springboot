@@ -22,7 +22,7 @@ public class FileUploadController {
     @PostMapping
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("userId") Long userId) {
         try {
-            String fileUrl = fileUploadService.uploadFile(file, userId);
+            String fileUrl = fileUploadService.uploadFileToS3(file, userId);
             return ResponseEntity.ok(fileUrl); // 성공적으로 파일 URL 반환
         } catch (IOException e) {
             e.printStackTrace();

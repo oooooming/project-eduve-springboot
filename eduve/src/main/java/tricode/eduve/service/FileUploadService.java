@@ -3,7 +3,6 @@ package tricode.eduve.service;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,7 +28,7 @@ public class FileUploadService {
     @Value("${cloud.aws.region.static}")
     private String region;
 
-    public String uploadFile(MultipartFile file, Long userId) throws IOException {
+    public String uploadFileToS3(MultipartFile file, Long userId) throws IOException {
         // 파일 이름과 URL 생성
         String fileName = file.getOriginalFilename();
         String fileUrl = "https://" + bucket + ".s3." + region + ".amazonaws.com/" + fileName;
