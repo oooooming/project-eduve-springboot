@@ -51,7 +51,7 @@ public class FileUploadService {
         // File 엔티티 객체 생성
         File fileEntity = File.builder()
                 .fileName(fileName)
-                .fileType(FileType.TEXT)  // 파일 유형을 TEXT로 설정 (필요에 따라 다른 유형을 설정)
+                .fileType(FileType.PDF)  // 파일 유형을 PDF로 설정
                 .fileUrl(fileUrl)
                 .user(user)
                 .build();
