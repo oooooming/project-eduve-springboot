@@ -1,5 +1,6 @@
 package tricode.eduve.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,11 +23,13 @@ public class ConversationController {
     private final ConversationService conversationService;
     private final ChatService chatService;
 
+    /*
     // 동기식 처리
     // 새로운 대화 시작
     @PostMapping("/start")
-    public ResponseEntity<MessageUnitDto> startConversation(@RequestBody MessageRequestDto requestDto) {
-        return ResponseEntity.ok(conversationService.startConversation(requestDto));
+    public ResponseEntity<MessageUnitDto> startConversation(@RequestBody MessageRequestDto requestDto,
+                                                            @RequestParam(name = "userId") Long userId) throws JsonProcessingException {
+        return ResponseEntity.ok(conversationService.startConversation(requestDto, userId));
     }
 
     // 비동기 처리
@@ -55,9 +58,11 @@ public class ConversationController {
     }
 
 
-//    // 대화에 메시지 추가
-//    @PostMapping("/{conversationId}/messages")
-//    public ResponseEntity<Message> addMessage(@PathVariable Long conversationId, @RequestParam String content) {
-//        return ResponseEntity.ok(conversationService.addMessage(conversationId, content));
-//    }
+    // 대화에 메시지 추가
+    @PostMapping("/{conversationId}/messages")
+    public ResponseEntity<Message> addMessage(@PathVariable Long conversationId, @RequestParam String content) {
+        return ResponseEntity.ok(conversationService.addMessage(conversationId, content));
+    }
+
+     */
 }

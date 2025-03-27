@@ -1,10 +1,7 @@
 package tricode.eduve.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import tricode.eduve.global.CreatedTimeEntity;
 
 @Entity
@@ -12,45 +9,47 @@ import tricode.eduve.global.CreatedTimeEntity;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Message extends CreatedTimeEntity {
 
     @Id
-    @Column(name = "message_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "message_id", nullable = false)
     private Long MessageId;
 
-    // 대화 세션(대화 단위? -> 어떤 기준으로 나눌건지)
     @ManyToOne
     @JoinColumn(name = "conversation_id", nullable = false)
     private Conversation conversation;
 
-    // 사용자 질문 내용
-    @Column(columnDefinition = "TEXT", nullable = false)
-    private String question;
-
-    // AI 답변
-    @Column(columnDefinition = "TEXT")
-    private String answer;
-    
-    // 메시지 처리 상태
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Status status;
-    
-    
-    
-    public enum Status{
-        PROCESSING, COMPLETED
+    private boolean isUserMessage; // true: 사용자 질문, false: 챗봇 응답
+
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String content; // 메시지 내용
+
+    // 어떤 질문에 대한 응답인지 저장 (챗봇 응답일 경우만 해당)
+    @ManyToOne
+    @JoinColumn(name = "question_message_id")
+    private Message questionMessage;
+
+
+
+    // 사용자 메시지 생성자
+    public static Message createUserMessage(Conversation conversation, String content) {
+        return Message.builder()
+                .conversation(conversation)
+                .isUserMessage(true)
+                .content(content)
+                .build();
     }
 
-    
-    
-    public Message(Long userId, String question) {
-        //this.conversation = ...
-        this.MessageId = userId;
-        this.question = question;
-    }
-    public Message(String answer) {
-        this.answer = answer;
+    // 챗봇 응답 메시지 생성자 (질문 메시지와 연결)
+    public static Message createBotResponse(Conversation conversation, String content, Message questionMessage) {
+        return Message.builder()
+                .conversation(conversation)
+                .isUserMessage(false)
+                .content(content)
+                .questionMessage(questionMessage) // 어떤 질문에 대한 응답인지 설정
+                .build();
     }
 }

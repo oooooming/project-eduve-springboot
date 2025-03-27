@@ -14,10 +14,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     public User findById(Long userId) {
-        Optional<User> user = userRepository.findById(userId);
-        if(user.isPresent())
-            return user.get();
-        else
-            throw new RuntimeException("user not found");
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
     }
 }
