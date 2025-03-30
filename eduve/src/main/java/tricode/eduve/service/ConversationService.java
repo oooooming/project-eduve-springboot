@@ -119,8 +119,10 @@ public class ConversationService {
         // 6. 메시지 저장 및 Conversation 갱신
         Message message = Message.createUserMessage(conversation, userMessage);
         messageRepository.save(message);
+        messageRepository.flush();
         conversation.updateLastTopic(userMessage);
         conversationRepository.save(conversation);
+        conversationRepository.flush();
 
         return message;
     }

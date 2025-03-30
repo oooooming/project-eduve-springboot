@@ -29,7 +29,7 @@ public class Message extends CreatedTimeEntity {
 
     // 어떤 질문에 대한 응답인지 저장 (챗봇 응답일 경우만 해당)
     @ManyToOne
-    @JoinColumn(name = "question_message_id")
+    @JoinColumn(name = "question_message_id", nullable = true)
     private Message questionMessage;
 
 

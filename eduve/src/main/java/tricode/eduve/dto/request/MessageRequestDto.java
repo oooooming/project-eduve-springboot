@@ -5,8 +5,5 @@ import lombok.Getter;
 
 @Getter
 public class MessageRequestDto {
-
     @NotNull private String question;
-    @NotNull private Long userId;
-
 }
