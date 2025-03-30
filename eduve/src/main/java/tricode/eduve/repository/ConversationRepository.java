@@ -11,4 +11,6 @@ public interface ConversationRepository extends JpaRepository<Conversation, Long
     List<Conversation> findAllByUser(User user);
 
     Optional<Conversation> findTopByUserOrderByCreatedTimeDesc(User user);
+
+    List<Conversation> findByUser(User user);
 }

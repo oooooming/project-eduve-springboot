@@ -15,7 +15,7 @@ public class MessageUnitDto {
     public static MessageUnitDto from(Message userMessage, Message botMessage) {
         return new MessageUnitDto(
                 new UserMessage(userMessage),
-                new BotMessage(botMessage)
+                new BotMessage(botMessage, userMessage.getMessageId())
         );
     }
 }

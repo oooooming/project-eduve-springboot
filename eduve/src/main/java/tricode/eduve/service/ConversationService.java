@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import tricode.eduve.domain.Conversation;
 import tricode.eduve.domain.Message;
 import tricode.eduve.domain.User;
+import tricode.eduve.dto.ConversationWithMessagesDto;
+import tricode.eduve.dto.OneMessageDto;
 import tricode.eduve.dto.response.ConversationResponseDto;
 import tricode.eduve.dto.request.MessageRequestDto;
 import tricode.eduve.dto.MessageUnitDto;
@@ -18,6 +20,7 @@ import tricode.eduve.repository.MessageRepository;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -120,6 +123,7 @@ public class ConversationService {
         Message message = Message.createUserMessage(conversation, userMessage);
         messageRepository.save(message);
         messageRepository.flush();
+        conversation.addMessage(message);
         conversation.updateLastTopic(userMessage);
         conversationRepository.save(conversation);
         conversationRepository.flush();
@@ -132,5 +136,56 @@ public class ConversationService {
         User user = userService.findById(userId);
         Conversation conversation = new Conversation(topic, user);
         return conversationRepository.save(conversation);
+    }
+
+    // 특정 userId의 conversation 목록 조회
+    public List<ConversationWithMessagesDto> getConversationsWithMessagesByUserId(Long userId) {
+        User user = userService.findById(userId);
+        List<Conversation> conversations = conversationRepository.findByUser(user);
+
+        return conversations.stream()
+                .map(ConversationWithMessagesDto::fromConversation)
+                .toList();
+    }
+
+    // 특정 Conversation의 메시지 목록 조회
+    public MessagesResponseDto getMessagesByConversationId(Long conversationId) {
+        Conversation conversation = conversationRepository.findById(conversationId)
+                .orElseThrow(()-> new RuntimeException("not found conversation"));
+
+        List<OneMessageDto> messageDtos = new ArrayList<>();
+        for(Message message : conversation.getMessages()) {
+            OneMessageDto oneMessageDto = createOneMessageDto(message);
+            messageDtos.add(oneMessageDto);
+        }
+
+        return MessagesResponseDto.of(conversation, messageDtos);
+    }
+
+    public void saveBotMessage(Message botMessage) {
+        messageRepository.save(botMessage);
+        botMessage.getConversation().addMessage(botMessage);
+        conversationRepository.save(botMessage.getConversation());
+    }
+
+    private OneMessageDto createOneMessageDto(Message message) {
+        Long messageId = message.getMessageId();
+        String content = message.getContent();
+        boolean isUserMessage = message.isUserMessage();
+        Long questionMessageId;
+        if(message.getQuestionMessage() == null){
+            questionMessageId = null;
+        }else{
+            questionMessageId = message.getQuestionMessage().getMessageId();
+        }
+        LocalDateTime createdTime = message.getCreatedTime();
+
+        return new OneMessageDto(
+                messageId,
+                content,
+                isUserMessage,
+                questionMessageId,
+                createdTime
+        );
     }
 }

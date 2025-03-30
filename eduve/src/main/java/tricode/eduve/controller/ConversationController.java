@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tricode.eduve.domain.Message;
+import tricode.eduve.dto.ConversationWithMessagesDto;
 import tricode.eduve.dto.response.ConversationResponseDto;
 import tricode.eduve.dto.request.MessageRequestDto;
 import tricode.eduve.dto.MessageUnitDto;
@@ -21,7 +22,6 @@ import java.util.Map;
 public class ConversationController {
 
     private final ConversationService conversationService;
-    private final ChatService chatService;
 
     /*
     // 동기식 처리
@@ -65,4 +65,16 @@ public class ConversationController {
     }
 
      */
+
+    // 특정 사용자의 모든 대화 및 메시지 목록 조회
+    @GetMapping("/user/{userId}")
+    public List<ConversationWithMessagesDto> getConversationsByUser(@PathVariable Long userId) {
+        return conversationService.getConversationsWithMessagesByUserId(userId);
+    }
+
+    // 특정 Conversation의 메시지 목록 조회
+    @GetMapping("/{conversationId}/messages")
+    public MessagesResponseDto getMessagesByConversation(@PathVariable Long conversationId) {
+        return conversationService.getMessagesByConversationId(conversationId);
+    }
 }

@@ -46,6 +46,12 @@ public class Conversation extends CreatedTimeEntity {
         updatedTime = LocalDateTime.now();
     }
 
+    // 메시지 추가 메서드
+    public void addMessage(Message message) {
+        message.setConversation(this);  // 양방향 관계 설정
+        this.messages.add(message);
+    }
+
     public void updateLastTopic(String newTopic) {
         this.lastTopic = newTopic;
     }

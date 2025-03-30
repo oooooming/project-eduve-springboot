@@ -6,17 +6,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import tricode.eduve.domain.Conversation;
 import tricode.eduve.domain.Message;
 import tricode.eduve.dto.request.MessageRequestDto;
 import tricode.eduve.dto.MessageUnitDto;
 import tricode.eduve.global.ChatGptClient;
 import tricode.eduve.global.FlaskComponent;
-import tricode.eduve.repository.MessageRepository;
 
-import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +22,6 @@ public class ChatService {
     private final ChatGptClient chatGptClient;
     private final FlaskComponent flaskComponent;
     private final ConversationService conversationService;
-    private final MessageRepository messageRepository;
 
     /*
     // 질문을 저장하고 비동기적으로 ChatGPT API 호출
@@ -108,7 +103,7 @@ public class ChatService {
 
         // 3. 봇 응답 저장
         Message botMessage = Message.createBotResponse(message.getConversation(), parsedResponse, message);
-        messageRepository.save(botMessage);
+        conversationService.saveBotMessage(botMessage);
 
         return MessageUnitDto.from(message,botMessage);
     }
