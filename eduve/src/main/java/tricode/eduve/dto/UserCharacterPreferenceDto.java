@@ -11,7 +11,7 @@ import tricode.eduve.domain.UserCharacter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserCharacterPreferenceDto {
-    private Long preferenceId;
+    private Long characterId;
     private String userCharacterName;
     private Long userCharacterId;
     //private String userCharacterImgUrl;
@@ -20,7 +20,7 @@ public class UserCharacterPreferenceDto {
 
     public static UserCharacterPreferenceDto from(UserCharacter userCharacter) {
         return new UserCharacterPreferenceDto(
-                userCharacter.getPreference().getPreferenceId(),
+                userCharacter.getCharacter().getAllCharacterId(),
                 userCharacter.getUserCharacterName(),
                 userCharacter.getUserCharacterId(),
                 userCharacter.getPreference().getTone().name(),  // Enum을 String으로 변환

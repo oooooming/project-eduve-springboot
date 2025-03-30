@@ -10,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserCharacterPreferenceRequestDto {
+    private Long characterId;
     private String userCharacterName; // 사용자 캐릭터 이름
     private String tone; // 말투
     private String descriptionLevel; // 설명 난이도

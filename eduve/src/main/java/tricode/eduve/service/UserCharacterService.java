@@ -9,6 +9,7 @@ import org.springframework.web.server.ResponseStatusException;
 import tricode.eduve.domain.*;
 import tricode.eduve.dto.UserCharacterPreferenceDto;
 import tricode.eduve.dto.UserCharacterPreferenceRequestDto;
+import tricode.eduve.repository.AllCharacterRepository;
 import tricode.eduve.repository.UserCharacterRepository;
 import tricode.eduve.repository.UserRepository;
 
@@ -22,6 +23,7 @@ public class UserCharacterService {
 
     private final UserCharacterRepository userCharacterRepository;
     private final UserRepository userRepository;
+    private final AllCharacterRepository allCharacterRepository;
 
     // userId로 캐릭터 설정 업데이트
     public UserCharacterPreferenceDto updateUserCharacter(Long userId, UserCharacterPreferenceRequestDto requestDto) {
@@ -53,6 +55,13 @@ public class UserCharacterService {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid descriptionlevel value");  // 유효하지 않으면 400 오류
             }
         }
+
+        if (requestDto.getCharacterId() != null) {
+            AllCharacter newCharacter = allCharacterRepository.findById(requestDto.getCharacterId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Character not found"));
+            userCharacter.setCharacter(newCharacter);  // 새로운 캐릭터로 변경
+        }
+
 
         userCharacterRepository.save(userCharacter);
         return UserCharacterPreferenceDto.from(userCharacter);  // UserCharacter -> UserCharacterPreferenceDto
