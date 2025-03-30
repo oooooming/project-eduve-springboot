@@ -34,11 +34,25 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
+<<<<<<< HEAD
 	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
 	implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
 
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE' // s3
+=======
+	// JSON 처리 의존성
+	implementation 'com.fasterxml.jackson.core:jackson-databind'
+	implementation 'org.json:json:20230227'
+
+	implementation 'org.slf4j:slf4j-api:2.0.0'  // SLF4J API
+	implementation 'ch.qos.logback:logback-classic:1.4.4'  // Logback
+	implementation 'org.apache.logging.log4j:log4j-api:2.20.0'
+	implementation 'org.apache.logging.log4j:log4j-core:2.20.0'
+
+	// chatgpt
+	implementation 'io.github.flashvayne:chatgpt-spring-boot-starter:1.0.4'
+>>>>>>> 0ed27b80dfe851613c09a629606e561040074b60
 }
 
 tasks.named('test') {
