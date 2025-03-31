@@ -3,19 +3,28 @@ package tricode.eduve.service;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import tricode.eduve.domain.AllCharacter;
 import tricode.eduve.domain.User;
+import tricode.eduve.domain.UserCharacter;
 import tricode.eduve.dto.JoinDTO;
+import tricode.eduve.repository.AllCharacterRepository;
+import tricode.eduve.repository.UserCharacterRepository;
 import tricode.eduve.repository.UserRepository;
 
 @Service
 public class StudentJoinService {
 
     private final UserRepository userRepository;
+    private final UserCharacterRepository userCharacterRepository;
+    private final AllCharacterRepository allCharacterRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public StudentJoinService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public StudentJoinService(UserRepository userRepository, UserCharacterRepository userCharacterRepository,
+                              AllCharacterRepository allCharacterRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
 
         this.userRepository = userRepository;
+        this.userCharacterRepository = userCharacterRepository;
+        this.allCharacterRepository = allCharacterRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
@@ -42,6 +51,16 @@ public class StudentJoinService {
         data.setEmail(email);
         data.setRole("ROLE_Student");
 
-        userRepository.save(data);
+        User savedUser = userRepository.save(data);
+
+        // 기본 캐릭터 가져오기 (characterId = 1)
+        AllCharacter defaultCharacter = allCharacterRepository.findById(1L)
+                .orElseThrow(() -> new RuntimeException("기본 캐릭터를 찾을 수 없습니다."));
+
+        // 기본 UserCharacter 생성
+        UserCharacter defaultUserCharacter = UserCharacter.createDefaultUserCharacter(savedUser, defaultCharacter);
+
+        // 저장
+        userCharacterRepository.save(defaultUserCharacter);
     }
 }

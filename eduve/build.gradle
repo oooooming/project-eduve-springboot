@@ -34,11 +34,26 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
+	// JWT 관련 라이브러리
 	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
 	implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
 
-	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE' // s3
+	// AWS S3 연동
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+	// JSON 처리 관련 라이브러리
+	implementation 'com.fasterxml.jackson.core:jackson-databind'
+	implementation 'org.json:json:20230227'
+
+	// 로깅 관련 라이브러리
+	implementation 'org.slf4j:slf4j-api:2.0.0'
+	implementation 'ch.qos.logback:logback-classic:1.4.4'
+	implementation 'org.apache.logging.log4j:log4j-api:2.20.0'
+	implementation 'org.apache.logging.log4j:log4j-core:2.20.0'
+
+	// ChatGPT API 연동
+	implementation 'io.github.flashvayne:chatgpt-spring-boot-starter:1.0.4'
 }
 
 tasks.named('test') {

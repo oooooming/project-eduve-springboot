@@ -32,7 +32,7 @@ public class StudentJoinController {
 
         Map<String, Object> response = new HashMap<>();
         response.put("message", "회원가입이 완료되었습니다.");
-        response.put("userId", joinDTO.getUsername());
+        // response.put("userId", joinDTO.getUsername());
 
         return ResponseEntity.ok(response);
     }
