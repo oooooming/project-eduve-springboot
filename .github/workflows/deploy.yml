@@ -42,8 +42,8 @@ jobs:
 
       - name: Build with Gradle
         run: |
-          chmod +x eduve/gradlew
-          eduve/gradlew build -x test
+          chmod +x ./gradlew
+          ./gradlew build -x test
         working-directory: eduve
 
       - name: Configure AWS credentials
