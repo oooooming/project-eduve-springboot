@@ -38,8 +38,8 @@ jobs:
 
       - name: Build with Gradle
         run: |
-          chmod +x ./gradlew
-          ./gradlew build -x test
+          chmod +x eduve/gradlew
+          eduve/gradlew build -x test
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
