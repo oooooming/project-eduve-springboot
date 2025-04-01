@@ -31,8 +31,8 @@ jobs:
 
       - name: make application.yml
         run: |
-          mkdir .eduve/src/main/resources 
-          cd .eduve/src/main/resources
+          mkdir eduve/src/main/resources 
+          cd eduve/src/main/resources
           touch ./application.yml
           echo "${{ secrets.APPLICATION_YML }}" > ./application.yml
 
