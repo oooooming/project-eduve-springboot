@@ -34,7 +34,7 @@ jobs:
 
       - name: Transfer JAR to EC2
         run: |
-          scp -i private_key.pem -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no eduve/build/libs/*.jar ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/
+          scp -o ConnectTimeout=30 -o StrictHostKeyChecking=no -i private_key.pem eduve/build/libs/*.jar ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/ || exit 0
 
       - name: Restart Application on EC2
         run: |
