@@ -6,9 +6,9 @@ on:
 
 env:
   AWS_REGION: ap-northeast-2
-  S3_BUCKET_NAME: efub-week10-github-actions-s3-bucket
-  CODE_DEPLOY_APPLICATION_NAME: efub-week10-codedeploy-app
-  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: efub-week10-codedeploy-deployment-group
+  S3_BUCKET_NAME: eduve-github-actions-s3-bucket
+  CODE_DEPLOY_APPLICATION_NAME: eduve-springboot-codedeploy-app
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: eduve-springboot-codedeploy-deployment-group
 
 permissions:
   contents: read
