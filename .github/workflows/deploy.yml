@@ -3,7 +3,7 @@ name: Deploy Spring Boot to EC2
 on:
   push:
     branches:
-      - deploy
+      - deploy  # ✅ deploy 브랜치로 푸시될 때만 실행
 
 jobs:
   deploy:
@@ -19,7 +19,11 @@ jobs:
           distribution: 'temurin'
           java-version: '17'  # 사용 중인 Java 버전
 
+      - name: Grant execute permission for gradlew
+        run: chmod +x eduve/gradlew
+
       - name: Build with Gradle
+        working-directory: eduve  # ✅ eduve 폴더에서 실행
         run: ./gradlew clean build -x test
 
       - name: Save Private Key
@@ -29,7 +33,7 @@ jobs:
 
       - name: Transfer JAR to EC2
         run: |
-          scp -i private_key.pem -o StrictHostKeyChecking=no build/libs/*.jar ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/
+          scp -i private_key.pem -o StrictHostKeyChecking=no eduve/build/libs/*.jar ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/
 
       - name: Restart Application on EC2
         run: |
