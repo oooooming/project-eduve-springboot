@@ -23,6 +23,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Change working directory
+        run: ls -l eduve
+
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
@@ -31,15 +34,17 @@ jobs:
 
       - name: make application.yml
         run: |
-          mkdir eduve/src/main/resources 
-          cd eduve/src/main/resources
+          mkdir ./src/main/resources 
+          cd ./src/main/resources
           touch ./application.yml
           echo "${{ secrets.APPLICATION_YML }}" > ./application.yml
+        working-directory: eduve
 
       - name: Build with Gradle
         run: |
           chmod +x eduve/gradlew
           eduve/gradlew build -x test
+        working-directory: eduve
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -55,6 +60,7 @@ jobs:
             --ignore-hidden-files \
             --s3-location s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip \
             --source .
+        working-directory: eduve
 
       - name: Deploy to AWS EC2 from S3
         run: |
