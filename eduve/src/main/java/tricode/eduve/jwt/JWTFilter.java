@@ -25,6 +25,17 @@ public class JWTFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
+        // ============================== //
+        // 요청 URI 가져오기
+        String requestURI = request.getRequestURI();
+
+        // `/join/student` 또는 `/join/teacher` 경로에서는 토큰 인증을 건너뜀
+        if (requestURI.startsWith("/join/student") || requestURI.startsWith("/join/teacher") || requestURI.startsWith("/login")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        // =============================== //
+
         //request에서 Authorization 헤더를 찾음
         String authorization = request.getHeader("Authorization");
 
