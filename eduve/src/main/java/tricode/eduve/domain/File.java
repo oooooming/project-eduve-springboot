@@ -35,6 +35,9 @@ public class File extends CreatedTimeEntity {
     @Column(nullable = false)
     private String fileUrl;
 
+    @ManyToOne
+    @JoinColumn(name = "folder_id")
+    private Folder folder;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -43,4 +46,16 @@ public class File extends CreatedTimeEntity {
     @OneToOne
     @JoinColumn(name = "voice_id", nullable = true)
     private VoiceFile voice;
+
+    public String getFullPath() {
+        return folder.getPath() + "/" + this.fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public void setFolder(Folder folder) {
+        this.folder = folder;
+    }
 }
