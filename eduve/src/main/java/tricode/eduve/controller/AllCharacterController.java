@@ -16,7 +16,7 @@ import tricode.eduve.service.AllCharacterService;
 public class AllCharacterController {
     private final AllCharacterService allCharacterService;
 
-    //모든 기본 캐릭터 정보 조회
+    // 모든 기본 캐릭터 정보 조회
     @GetMapping
     public ResponseEntity<AllCharacterResponseDto> getAllCharacters() {
         return ResponseEntity.ok(allCharacterService.getAllCharacters());
