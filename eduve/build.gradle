@@ -59,3 +59,11 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+bootJar {
+	archiveClassifier.set("") // 실행 가능한 JAR 파일만 생성
+}
+
+jar {
+	enabled = false // plain.jar 생성 비활성화
+}
