@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tricode.eduve.domain.Folder;
+import tricode.eduve.dto.FileDto;
 import tricode.eduve.dto.FolderDto;
 import tricode.eduve.service.FolderService;
 
@@ -46,7 +47,10 @@ public class FolderController {
 
     // 파일 path 구하기
     @GetMapping("/files/{fileId}/path")
-    public ResponseEntity<String> getFilePath(@PathVariable Long fileId) {
-        return ResponseEntity.ok(folderService.getFilePath(fileId));
+    public ResponseEntity<FileDto> getFilePath(@PathVariable Long fileId) {
+        String path = folderService.getFilePath(fileId);
+        FileDto dto = new FileDto();
+        dto.setFilePath(path);
+        return ResponseEntity.ok(dto);
     }
 }
