@@ -25,9 +25,9 @@ public class FileController {
 
     // 일반 파일 업로드
     @PostMapping("/text")
-    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("userId") Long userId) {
+    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("userId") Long userId, @RequestParam("folderId") Long folderId) {
         try {
-            String fileUrl = fileUploadService.uploadFileToS3(file, userId);
+            String fileUrl = fileUploadService.uploadFileToS3(file, userId,folderId);
             return ResponseEntity.ok(fileUrl); // 성공적으로 파일 URL 반환
         } catch (IOException e) {
             e.printStackTrace();
