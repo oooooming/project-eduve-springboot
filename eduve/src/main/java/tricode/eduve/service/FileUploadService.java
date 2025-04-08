@@ -10,6 +10,7 @@ import tricode.eduve.domain.File;
 import tricode.eduve.domain.FileType;
 import tricode.eduve.domain.Folder;
 import tricode.eduve.domain.User;
+import tricode.eduve.global.FlaskComponent;
 import tricode.eduve.repository.FileRepository;
 import tricode.eduve.repository.FolderRepository;
 import tricode.eduve.repository.UserRepository;
@@ -25,6 +26,7 @@ public class FileUploadService {
     private final FileRepository fileRepository;
     private final UserRepository userRepository;
     private final FolderRepository folderRepository;
+    private final FlaskComponent flaskComponent;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
@@ -94,5 +96,9 @@ public class FileUploadService {
         fileRepository.save(fileEntity);
 
         return fileUrl; // 성공적으로 파일 URL 반환
+    }
+
+    public String embedDocument(MultipartFile file) throws IOException {
+        return flaskComponent.embedDocument(file);
     }
 }
