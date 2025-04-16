@@ -3,10 +3,12 @@ package tricode.eduve.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import tricode.eduve.dto.FolderDto;
 import tricode.eduve.dto.response.FileResponseDto;
+import tricode.eduve.dto.response.FileUploadResponseDto;
+import tricode.eduve.global.FlaskComponent;
 import tricode.eduve.service.FileService;
 import tricode.eduve.service.FileUploadService;
 import tricode.eduve.service.FolderService;
@@ -21,17 +23,29 @@ public class FileController {
 
     private final FileUploadService fileUploadService;
     private final FileService fileService;
-    private final FolderService folderService;
 
     // 일반 파일 업로드
     @PostMapping("/text")
-    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("userId") Long userId) {
+    public ResponseEntity<FileUploadResponseDto> uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("userId") Long userId, @RequestParam("folderId") Long folderId) {
         try {
-            String fileUrl = fileUploadService.uploadFileToS3(file, userId);
-            return ResponseEntity.ok(fileUrl); // 성공적으로 파일 URL 반환
+            // 1. 파일을 S3에 업로드
+            FileResponseDto fileDto = fileUploadService.uploadFileToS3(file, userId, folderId);
+
+            // 2. Flask로 파일 전달하여 임베딩 수행
+            String flaskResult = fileUploadService.embedDocument(file);
+
+            // 3. 결과 합쳐서 JSON으로 반환
+            FileUploadResponseDto responseDto = FileUploadResponseDto.builder()
+                    .fileInfo(fileDto)
+                    .flaskMessage(flaskResult)
+                    .build();
+
+            return ResponseEntity.ok(responseDto);
+
         } catch (IOException e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("File upload failed: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null);
         }
     }
 
