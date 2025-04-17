@@ -52,6 +52,9 @@ public class MessageLikeService {
         MessageLike messageLike = messageLikeRepository.findByMessage(message)
                 .orElseThrow(()-> new RuntimeException("MessageLike not found."));
 
+        message.setLike(null);
+        messageLike.setMessage(null);
+
         messageLikeRepository.delete(messageLike);
         return "Message Like deleted";
     }

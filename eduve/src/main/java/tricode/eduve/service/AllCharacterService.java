@@ -4,8 +4,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import tricode.eduve.domain.AllCharacter;
-import tricode.eduve.dto.AllCharacterResponseDto;
-import tricode.eduve.dto.CharacterUnitDto;
+import tricode.eduve.dto.response.character.AllCharacterResponseDto;
+import tricode.eduve.dto.response.character.CharacterUnitDto;
 import tricode.eduve.repository.AllCharacterRepository;
 
 import java.util.List;

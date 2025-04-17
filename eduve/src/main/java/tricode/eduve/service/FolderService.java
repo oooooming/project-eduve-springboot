@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import tricode.eduve.domain.File;
 import tricode.eduve.domain.Folder;
 import tricode.eduve.domain.User;
-import tricode.eduve.dto.FolderDto;
+import tricode.eduve.dto.response.FolderDto;
 import tricode.eduve.dto.response.RootFolderDto;
 import tricode.eduve.repository.FileRepository;
 import tricode.eduve.repository.FolderRepository;

@@ -1,4 +1,4 @@
-package tricode.eduve.dto;
+package tricode.eduve.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
