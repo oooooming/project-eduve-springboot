@@ -25,6 +25,7 @@ public class FileController {
     private final FileUploadService fileUploadService;
     private final FileService fileService;
 
+    // 음성 파일 업로드
     @PostMapping("/voice")
     public ResponseEntity<FileUploadResponseDto> uploadVoiceFile(@RequestParam("file") MultipartFile file,
                                                                  @RequestParam("userId") Long userId,
@@ -70,6 +71,24 @@ public class FileController {
     public ResponseEntity<FileResponseDto> getFile(@PathVariable Long fileId) {
         FileResponseDto fileResponseDto = fileService.getFileById(fileId);
         return ResponseEntity.ok(fileResponseDto);
+    }
+
+    // 파일 최신순 정렬
+    @GetMapping("/sort/date")
+    public ResponseEntity<List<FileResponseDto>> getFilesSortedByDate() {
+        return ResponseEntity.ok(fileService.getFilesOrderedByDate());
+    }
+
+    // 파일 이름순 정렬
+    @GetMapping("/sort/name")
+    public ResponseEntity<List<FileResponseDto>> getFilesSortedByName() {
+        return ResponseEntity.ok(fileService.getFilesOrderedByName());
+    }
+
+    // 파일 이름명 검색
+    @GetMapping("/search")
+    public ResponseEntity<List<FileResponseDto>> searchFiles(@RequestParam String keyword) {
+        return ResponseEntity.ok(fileService.searchFilesByName(keyword));
     }
 
     // 파일 삭제
