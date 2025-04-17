@@ -14,6 +14,7 @@ import tricode.eduve.service.FileUploadService;
 import tricode.eduve.service.FolderService;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -24,6 +25,21 @@ public class FileController {
     private final FileUploadService fileUploadService;
     private final FileService fileService;
 
+    @PostMapping("/voice")
+    public ResponseEntity<FileUploadResponseDto> uploadVoiceFile(@RequestParam("file") MultipartFile file,
+                                                                 @RequestParam("userId") Long userId,
+                                                                 @RequestParam("folderId") Long folderId) throws IOException {
+        try {
+            FileUploadResponseDto responseDto = fileUploadService.uploadAudioAndTranscribe(file, userId, folderId);
+
+            return ResponseEntity.ok(responseDto);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null);
+        }
+    }
     // 일반 파일 업로드
     @PostMapping("/text")
     public ResponseEntity<FileUploadResponseDto> uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("userId") Long userId, @RequestParam("folderId") Long folderId) {
@@ -36,7 +52,7 @@ public class FileController {
 
             // 3. 결과 합쳐서 JSON으로 반환
             FileUploadResponseDto responseDto = FileUploadResponseDto.builder()
-                    .fileInfo(fileDto)
+                    .fileInfo(List.of(fileDto))
                     .flaskMessage(flaskResult)
                     .build();
 
