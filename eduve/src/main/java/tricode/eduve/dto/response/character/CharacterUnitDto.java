@@ -13,12 +13,13 @@ import tricode.eduve.domain.AllCharacter;
 public class CharacterUnitDto {
     private Long characterId;
     private String characterName;
-    //private String characterImgUrl;
+    private String characterImgUrl;
 
     public static CharacterUnitDto from(AllCharacter character) {
         return new CharacterUnitDto(
                 character.getAllCharacterId(),
-                character.getCharacterName()
+                character.getCharacterName(),
+                character.getCharacterImgUrl()
         );
     }
 }

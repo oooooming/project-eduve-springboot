@@ -20,14 +20,14 @@ public class AllCharacterService {
     public AllCharacterResponseDto getAllCharacters() {
         List<AllCharacter> allCharacters = allCharacterRepository.findAll();
         List<CharacterUnitDto> characterDtos = allCharacters.stream()
-                .map(character -> new CharacterUnitDto(character.getAllCharacterId(), character.getCharacterName()))
+                .map(character -> new CharacterUnitDto(character.getAllCharacterId(), character.getCharacterName(), character.getCharacterImgUrl()))
                 .collect(Collectors.toList());
         return new AllCharacterResponseDto(characterDtos);
     }
 
     public CharacterUnitDto getOneCharacters(Long allCharacterId) {
         return allCharacterRepository.findById(allCharacterId)
-                .map(character -> new CharacterUnitDto(character.getAllCharacterId(), character.getCharacterName()))
+                .map(character -> new CharacterUnitDto(character.getAllCharacterId(), character.getCharacterName(), character.getCharacterImgUrl()))
                 .orElseThrow(() -> new RuntimeException("Character not found with id " + allCharacterId));
     }
 }
