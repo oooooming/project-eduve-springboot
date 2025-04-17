@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import tricode.eduve.domain.Folder;
 import tricode.eduve.dto.FileDto;
 import tricode.eduve.dto.FolderDto;
+import tricode.eduve.dto.response.FolderPathDto;
 import tricode.eduve.dto.response.RootFolderDto;
 import tricode.eduve.service.FolderService;
 
@@ -53,5 +54,20 @@ public class FolderController {
         FileDto dto = new FileDto();
         dto.setFilePath(path);
         return ResponseEntity.ok(dto);
+    }
+
+    @PatchMapping("/{folderId}")
+    public ResponseEntity<FolderDto> updateFolder(@PathVariable Long folderId,
+                                                  @RequestParam String newFolderName){
+        return folderService.updateFolder(folderId, newFolderName);
+    }
+
+    // 폴더 위치 변경 (폴더 path 수정)
+    @PatchMapping("/{folderId}/path")
+    public ResponseEntity<FolderPathDto> updateFilePath(@PathVariable Long folderId,
+                                                        @RequestParam Long newParentFolderId){
+        String path = folderService.updateFolderPath(folderId, newParentFolderId);
+
+        return ResponseEntity.ok(new FolderPathDto(path));
     }
 }
