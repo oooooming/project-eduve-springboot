@@ -1,6 +1,8 @@
 package tricode.eduve.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import tricode.eduve.domain.File;
 import tricode.eduve.domain.Folder;
@@ -16,6 +18,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class FolderService {
 
     private final FolderRepository folderRepository;
@@ -56,6 +59,7 @@ public class FolderService {
                 .collect(Collectors.toList());
     }
 
+    // 폴더 삭제
     public void deleteFolder(Long folderId) {
         folderRepository.deleteById(folderId);
     }
@@ -73,6 +77,31 @@ public class FolderService {
         return folderRepository.findByUserAndParentFolderIsNull(user).stream()
                 .map(RootFolderDto::fromEntity)
                 .collect(Collectors.toList());
+    }
+
+    //폴더 이름 수정
+    public ResponseEntity<FolderDto> updateFolder(Long folderId, String newFolderName) {
+        Folder folder =  folderRepository.findById(folderId)
+                .orElseThrow(() -> new RuntimeException("폴더를 찾을 수 없습니다."));
+
+        folder.setName(newFolderName);
+        folderRepository.save(folder);
+        return ResponseEntity.ok(FolderDto.fromEntity(folder));
+    }
+
+    // 파일 path 수정
+    public String updateFolderPath(Long folderId, Long newParentFolderId) {
+        Folder folder =  folderRepository.findById(folderId)
+                .orElseThrow(() -> new RuntimeException("폴더를 찾을 수 없습니다."));
+
+        Folder newParentFolder =  folderRepository.findById(newParentFolderId)
+                .orElseThrow(() -> new RuntimeException("새로운 상위 폴더를 찾을 수 없습니다."));
+
+        folder.setParentFolder(newParentFolder);
+        folder.updatePath();
+        folderRepository.save(folder);
+
+        return folder.getPath();
     }
 }
 
