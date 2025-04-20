@@ -155,4 +155,48 @@ public class ChatGptClient {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("api 호출 중 예외 발생: " + e.getMessage()); // 예외 메시지 반환
         }
     }
+
+
+    public String analyzeLikedMessages(List<String> likedMessages) {
+        // 사용자 선호 스타일 분석을 위한 단일 프롬프트 생성
+        String prompt = "다음 메시지들에 기반하여 사용자의 선호 스타일을 분석해 주세요: \n"
+                + String.join("\n", likedMessages);
+
+        // HTTP 요청을 위한 헤더 설정
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        headers.set("Authorization", "Bearer " + API_KEY);
+
+        // 사용자 메시지 설정
+        JSONObject messageUser = new JSONObject();
+        messageUser.put("role", "user");
+        messageUser.put("content", prompt);  // 단순히 사용자 메시지로 프롬프트 사용
+
+        // 요청 본문 생성
+        JSONObject requestBody = new JSONObject();
+        requestBody.put("model", "gpt-4o-2024-05-13");
+        requestBody.put("messages", new JSONArray(Arrays.asList(messageUser)));
+
+        // HTTP 요청 엔티티 생성
+        HttpEntity<String> request = new HttpEntity<>(requestBody.toString(), headers);
+
+        String apiEndpoint = "https://api.openai.com/v1/chat/completions"; // API 엔드포인트
+
+        try {
+            // API 호출
+            ResponseEntity<String> response = restTemplate.postForEntity(apiEndpoint, request, String.class);
+
+            // 응답 확인
+            if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+                return response.getBody();  // 응답 내용 반환
+            } else {
+                throw new RuntimeException("API 호출 중 오류 발생!");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("API 호출 중 예외 발생: " + e.getMessage());
+        }
+    }
+
 }
