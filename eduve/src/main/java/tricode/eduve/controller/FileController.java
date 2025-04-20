@@ -3,15 +3,12 @@ package tricode.eduve.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import tricode.eduve.dto.response.FileResponseDto;
 import tricode.eduve.dto.response.FileUploadResponseDto;
-import tricode.eduve.global.FlaskComponent;
 import tricode.eduve.service.FileService;
 import tricode.eduve.service.FileUploadService;
-import tricode.eduve.service.FolderService;
 
 import java.io.IOException;
 import java.util.List;

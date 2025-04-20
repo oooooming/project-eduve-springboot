@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import tricode.eduve.domain.Message;
 import tricode.eduve.dto.request.MessageRequestDto;
-import tricode.eduve.dto.MessageUnitDto;
+import tricode.eduve.dto.response.message.MessageUnitDto;
 import tricode.eduve.global.ChatGptClient;
 import tricode.eduve.global.FlaskComponent;
 

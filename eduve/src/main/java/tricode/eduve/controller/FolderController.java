@@ -3,10 +3,9 @@ package tricode.eduve.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import tricode.eduve.domain.Folder;
-import tricode.eduve.dto.FileDto;
-import tricode.eduve.dto.FolderDto;
 import tricode.eduve.dto.response.FolderPathDto;
+import tricode.eduve.dto.response.FileDto;
+import tricode.eduve.dto.response.FolderDto;
 import tricode.eduve.dto.response.RootFolderDto;
 import tricode.eduve.service.FolderService;
 

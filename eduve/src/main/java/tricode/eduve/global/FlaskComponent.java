@@ -1,7 +1,6 @@
 package tricode.eduve.global;
 
 
-import org.springframework.core.io.Resource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;

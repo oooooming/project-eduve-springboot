@@ -7,13 +7,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import tricode.eduve.domain.*;
-import tricode.eduve.dto.UserCharacterPreferenceDto;
-import tricode.eduve.dto.UserCharacterPreferenceRequestDto;
+import tricode.eduve.dto.response.character.UserCharacterPreferenceDto;
+import tricode.eduve.dto.request.UserCharacterPreferenceRequestDto;
 import tricode.eduve.repository.AllCharacterRepository;
 import tricode.eduve.repository.UserCharacterRepository;
 import tricode.eduve.repository.UserRepository;
-
-import java.util.Optional;
 
 @Service
 @Slf4j
