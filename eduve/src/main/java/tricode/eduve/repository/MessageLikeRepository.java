@@ -18,7 +18,5 @@ public interface MessageLikeRepository extends JpaRepository<MessageLike, Long> 
 
     List<MessageLike> findAllByUser(User user);
 
-    List<MessageLike> findByUserAndCreatedAtAfter(User user, LocalDateTime lastAnalyzedAt);
-
     long countByUser(User user);
 }

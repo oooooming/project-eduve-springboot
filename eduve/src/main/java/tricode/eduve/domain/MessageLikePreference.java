@@ -21,6 +21,7 @@ public class MessageLikePreference {
     private User user;
 
     @Lob
+    @Column(columnDefinition = "MEDIUMTEXT")
     private String analysisResult;
 
     private LocalDateTime lastAnalyzedAt;
