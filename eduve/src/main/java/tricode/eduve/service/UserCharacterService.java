@@ -78,4 +78,13 @@ public class UserCharacterService {
         return userCharacterRepository.findByUser(user)
                 .orElseThrow(()-> new RuntimeException("not found userCharacter"));
     }
+
+    // 사용자가 설정한 TONE, DISCRIPTIONLEVEL 조회
+    public Preference getPrefernceByUserId(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(()-> new RuntimeException("not found user"));
+        UserCharacter userCharacter = userCharacterRepository.findByUser(user)
+                .orElseThrow(()-> new RuntimeException("not found userCharacter"));
+        return userCharacter.getPreference();
+    }
 }

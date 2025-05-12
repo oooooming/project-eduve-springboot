@@ -7,6 +7,7 @@ import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import tricode.eduve.domain.Preference;
 
 import java.util.*;
 
@@ -112,7 +113,7 @@ public class ChatGptClient {
 
 
 
-    public ResponseEntity<String> chat(String question, String similarDocuments) {
+    public ResponseEntity<String> chat(String question, String similarDocuments, Preference preference) {
 
         HttpHeaders headers = new HttpHeaders(); // HTTP 헤더 생성
         headers.setContentType(MediaType.APPLICATION_JSON); // 요청 본문 타입 설정
@@ -121,11 +122,14 @@ public class ChatGptClient {
 
         JSONObject messageSystem = new JSONObject(); // 시스템 메시지 JSON 객체 생성
         messageSystem.put("role", "system");  // 역할 설정
+        /*
         String prompt = "너는 학생들에게 모르는 부분을 친절하게 설명해주는 학습 보조 챗봇이야. "
                 + "질문에 답할 때는 반드시 제공된 '관련 문서'를 근거로 설명해야 해. "
                 + "관련 문서에 없는 내용은 절대 추측하거나 지어내지 마. "
                 + "관련 문서에 답이 없으면 '관련 문서에 해당 내용이 없습니다.'라고 정직하게 답변해. "
                 + "다음은 관련 문서야: " + similarDocuments;
+         */
+        String prompt = buildPrompt(similarDocuments, preference);
         messageSystem.put("content", prompt); // 시스템 메시지 추가
 
         JSONObject messageUser = new JSONObject(); // 사용자 메시지 JSON 객체 생성
@@ -154,5 +158,21 @@ public class ChatGptClient {
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("api 호출 중 예외 발생: " + e.getMessage()); // 예외 메시지 반환
         }
+    }
+
+    private String buildPrompt(String similarDocuments, Preference preference) {
+
+        // 톤과 설명 수준에 맞는 프롬프트 설정
+        String toneInstruction = preference.getTone().getPromptInstruction();
+        String levelInstruction = preference.getDescriptionLevel().getPromptInstruction();
+
+
+        String prompt = "너는 학생들에게 모르는 부분을 친절하게 설명해주는 학습 보조 챗봇이야. "
+                + toneInstruction + levelInstruction
+                + "질문에 답할 때는 반드시 제공된 '관련 문서'를 근거로 설명해야 해. "
+                + "관련 문서에 없는 내용은 절대 추측하거나 지어내지 마. "
+                + "다음은 관련 문서야: " + similarDocuments;
+
+        return prompt;
     }
 }
