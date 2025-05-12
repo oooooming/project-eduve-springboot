@@ -15,6 +15,7 @@ import tricode.eduve.repository.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,8 +29,7 @@ public class FolderService {
 
 
     public FolderDto createFolder(String name, Long parentId, Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
+        User user = findUserById(userId);
 
         Folder folder = new Folder(name, user);
 
@@ -46,12 +46,9 @@ public class FolderService {
     }
 
     public FolderDto getFolder(Long folderId, Long userId) {
-        Folder folder =  folderRepository.findById(folderId)
-                .orElseThrow(() -> new RuntimeException("폴더를 찾을 수 없습니다."));
+        Folder folder =  findFolderById(folderId);
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
-
+        User user = findUserById(userId);
         //임시 teacher
         User teacher = new User();
 
@@ -60,7 +57,6 @@ public class FolderService {
         User teacher = userRepository.findTeacherByStudent0(user)
                     .orElseThrow(() -> new RuntimeException("선생님을 찾을 수 없습니다."));
          */
-
         return FolderDto.fromEntity(folder, user, teacher);
     }
 
@@ -86,10 +82,9 @@ public class FolderService {
         return file.getFullPath(); // 저장된 path가 아닌 동적 계산된 path 반환
     }
 
-    //최상위폴더 리스트 조회(선생님+자기꺼)
+    //최상위 폴더 리스트 조회(선생님+자기꺼)
     public List<RootFolderDto> getRootFoldersByUser(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
+        User user = findUserById(userId);
 
         // 자기 자신 + (optional) 선생님 포함할 수 있도록 변경
         List<User> accessibleUsers = new ArrayList<>();
@@ -112,9 +107,14 @@ public class FolderService {
     }
 
     //폴더 이름 수정
-    public ResponseEntity<FolderDto> updateFolder(Long folderId, String newFolderName) {
-        Folder folder =  folderRepository.findById(folderId)
-                .orElseThrow(() -> new RuntimeException("폴더를 찾을 수 없습니다."));
+    public ResponseEntity<FolderDto> updateFolder(Long folderId, String newFolderName, Long userId) {
+        User user = findUserById(userId);
+        Folder folder =  findFolderById(folderId);
+
+        // 수정 권한 확인
+        if(!Objects.equals(user.getUserId(), folder.getUser().getUserId())) {
+            throw new RuntimeException("수정 권한이 없습니다.");
+        }
 
         folder.setName(newFolderName);
         folderRepository.save(folder);
@@ -122,9 +122,14 @@ public class FolderService {
     }
 
     // 파일 path 수정
-    public String updateFolderPath(Long folderId, Long newParentFolderId) {
-        Folder folder =  folderRepository.findById(folderId)
-                .orElseThrow(() -> new RuntimeException("폴더를 찾을 수 없습니다."));
+    public String updateFolderPath(Long folderId, Long newParentFolderId, Long userId) {
+        User user = findUserById(userId);
+        Folder folder =  findFolderById(folderId);
+
+        // 수정 권한 확인
+        if(!Objects.equals(user.getUserId(), folder.getUser().getUserId())) {
+            throw new RuntimeException("수정 권한이 없습니다.");
+        }
 
         Folder newParentFolder =  folderRepository.findById(newParentFolderId)
                 .orElseThrow(() -> new RuntimeException("새로운 상위 폴더를 찾을 수 없습니다."));
@@ -134,6 +139,17 @@ public class FolderService {
         folderRepository.save(folder);
 
         return folder.getPath();
+    }
+
+    public User findUserById(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
+        return user;
+    }
+    public Folder findFolderById(Long folderId) {
+        Folder folder =  folderRepository.findById(folderId)
+                .orElseThrow(() -> new RuntimeException("폴더를 찾을 수 없습니다."));
+        return folder;
     }
 }
 

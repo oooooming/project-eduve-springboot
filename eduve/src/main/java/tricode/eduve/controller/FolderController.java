@@ -56,17 +56,20 @@ public class FolderController {
         return ResponseEntity.ok(dto);
     }
 
+    // 폴더 이름 변경
     @PatchMapping("/{folderId}")
     public ResponseEntity<FolderDto> updateFolder(@PathVariable Long folderId,
-                                                  @RequestParam String newFolderName){
-        return folderService.updateFolder(folderId, newFolderName);
+                                                  @RequestParam String newFolderName,
+                                                  @RequestParam Long userId) {
+        return folderService.updateFolder(folderId, newFolderName, userId);
     }
 
     // 폴더 위치 변경 (폴더 path 수정)
     @PatchMapping("/{folderId}/path")
     public ResponseEntity<FolderPathDto> updateFilePath(@PathVariable Long folderId,
-                                                        @RequestParam Long newParentFolderId){
-        String path = folderService.updateFolderPath(folderId, newParentFolderId);
+                                                        @RequestParam Long newParentFolderId,
+                                                        @RequestParam Long userId){
+        String path = folderService.updateFolderPath(folderId, newParentFolderId, userId);
 
         return ResponseEntity.ok(new FolderPathDto(path));
     }
