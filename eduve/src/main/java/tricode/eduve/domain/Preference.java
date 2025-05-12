@@ -31,7 +31,7 @@ public class Preference {
     public static Preference createDefaultPreference() {
         Preference preference = new Preference();
         preference.setTone(Tone.FRIENDLY);
-        preference.setDescriptionLevel(DescriptionLevel.MEDIUM);
+        preference.setDescriptionLevel(DescriptionLevel.HIGH);
         return preference;
     }
 }
