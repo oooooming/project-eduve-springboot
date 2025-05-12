@@ -3,10 +3,10 @@ package tricode.eduve.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import tricode.eduve.dto.response.FolderPathDto;
-import tricode.eduve.dto.response.FileDto;
-import tricode.eduve.dto.response.FolderDto;
-import tricode.eduve.dto.response.RootFolderDto;
+import tricode.eduve.dto.response.file_folder.FolderPathDto;
+import tricode.eduve.dto.response.file_folder.FileDto;
+import tricode.eduve.dto.response.file_folder.FolderDto;
+import tricode.eduve.dto.response.file_folder.RootFolderDto;
 import tricode.eduve.service.FolderService;
 
 import java.util.List;
@@ -28,9 +28,10 @@ public class FolderController {
     }
 
     // 폴더 하나 조회
-    @GetMapping("/{folderId}")
-    public ResponseEntity<FolderDto> getFolder(@PathVariable Long folderId) {
-        return ResponseEntity.ok(folderService.getFolder(folderId));
+    @GetMapping("/user/{userId}/folder/{folderId}")
+    public ResponseEntity<FolderDto> getFolder(@PathVariable Long folderId,
+                                               @PathVariable Long userId) {
+        return ResponseEntity.ok(folderService.getFolder(folderId, userId));
     }
 
     // 최상위 폴더 목록 조회

@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import tricode.eduve.domain.File;
 import tricode.eduve.domain.Folder;
-import tricode.eduve.dto.response.FileResponseDto;
+import tricode.eduve.dto.response.file_folder.FileResponseDto;
 import tricode.eduve.repository.FileRepository;
 import tricode.eduve.repository.FolderRepository;
 

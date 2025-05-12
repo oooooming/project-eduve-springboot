@@ -7,12 +7,13 @@ import org.springframework.stereotype.Service;
 import tricode.eduve.domain.File;
 import tricode.eduve.domain.Folder;
 import tricode.eduve.domain.User;
-import tricode.eduve.dto.response.FolderDto;
-import tricode.eduve.dto.response.RootFolderDto;
+import tricode.eduve.dto.response.file_folder.FolderDto;
+import tricode.eduve.dto.response.file_folder.RootFolderDto;
 import tricode.eduve.repository.FileRepository;
 import tricode.eduve.repository.FolderRepository;
 import tricode.eduve.repository.UserRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,12 +45,26 @@ public class FolderService {
         return FolderDto.fromEntity(folderRepository.save(folder));
     }
 
-    public FolderDto getFolder(Long folderId) {
+    public FolderDto getFolder(Long folderId, Long userId) {
         Folder folder =  folderRepository.findById(folderId)
                 .orElseThrow(() -> new RuntimeException("폴더를 찾을 수 없습니다."));
-        return FolderDto.fromEntity(folder);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
+
+        //임시 teacher
+        User teacher = new User();
+
+        // 연결된 선생님 찾기
+        /*
+        User teacher = userRepository.findTeacherByStudent0(user)
+                    .orElseThrow(() -> new RuntimeException("선생님을 찾을 수 없습니다."));
+         */
+
+        return FolderDto.fromEntity(folder, user, teacher);
     }
 
+    /*
     public List<FolderDto> getAllFolders(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
@@ -58,6 +73,7 @@ public class FolderService {
                 .map(FolderDto::fromEntity)
                 .collect(Collectors.toList());
     }
+    */
 
     // 폴더 삭제
     public void deleteFolder(Long folderId) {
@@ -70,11 +86,27 @@ public class FolderService {
         return file.getFullPath(); // 저장된 path가 아닌 동적 계산된 path 반환
     }
 
+    //최상위폴더 리스트 조회(선생님+자기꺼)
     public List<RootFolderDto> getRootFoldersByUser(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
 
-        return folderRepository.findByUserAndParentFolderIsNull(user).stream()
+        // 자기 자신 + (optional) 선생님 포함할 수 있도록 변경
+        List<User> accessibleUsers = new ArrayList<>();
+        accessibleUsers.add(user);
+
+
+        // 연결된 선생님이 있다면 추가
+        /*
+        userRepository.findTeacherIdByStudentId(userId).ifPresent(teacherId -> {
+            User teacher = userRepository.findById(teacherId)
+                    .orElseThrow(() -> new RuntimeException("선생님을 찾을 수 없습니다."));
+            accessibleUsers.add(teacher);
+        });
+        */
+
+        // 이 유저들에 해당하는 루트 폴더 조회
+        return folderRepository.findByUserInAndParentFolderIsNull(accessibleUsers).stream()
                 .map(RootFolderDto::fromEntity)
                 .collect(Collectors.toList());
     }
