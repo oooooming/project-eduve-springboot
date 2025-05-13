@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import tricode.eduve.dto.MessageUnitDto;
+import tricode.eduve.dto.response.message.MessageUnitDto;
 import tricode.eduve.dto.request.MessageRequestDto;
 import tricode.eduve.service.ChatService;
 
