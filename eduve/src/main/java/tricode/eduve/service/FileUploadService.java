@@ -133,7 +133,7 @@ public class FileUploadService {
         FileResponseDto textFileInfo = uploadFileToS3(textMultipartFile, userId, folderId);
 
         // 5. Flask 임베딩 호출
-        String flaskResult = embedDocument(textMultipartFile);
+        String flaskResult = embedDocument(textMultipartFile, userId);
 
         return FileUploadResponseDto.builder()
                 .fileInfo(List.of(audioFileInfo, textFileInfo))
@@ -206,8 +206,8 @@ public class FileUploadService {
         return FileResponseDto.from(fileEntity);
     }
 
-    public String embedDocument(MultipartFile file) throws IOException {
-        return flaskComponent.embedDocument(file);
+    public String embedDocument(MultipartFile file, Long userId) throws IOException {
+        return flaskComponent.embedDocument(file, userId);
     }
 
     private java.io.File convertMultipartToFile(MultipartFile file) throws IOException {
