@@ -6,6 +6,7 @@ import tricode.eduve.domain.Folder;
 import tricode.eduve.domain.User;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Getter
@@ -33,7 +34,7 @@ public class FolderDto {
                 folder.getSubFolders().stream()
                         .filter(subFolder -> {
                             User folderOwner = subFolder.getUser();
-                            return folderOwner.equals(user) || folderOwner.equals(teacher);
+                            return Objects.equals(folderOwner, user) || Objects.equals(folderOwner, teacher);
                         })
                         .map(subFolder -> fromEntity(subFolder, user, teacher))
                         .collect(Collectors.toList())
@@ -44,7 +45,7 @@ public class FolderDto {
                 folder.getFiles().stream()
                         .filter(file -> {
                             User fileOwner = file.getUser();
-                            return fileOwner.equals(user) || fileOwner.equals(teacher);
+                            return Objects.equals(fileOwner, user) || Objects.equals(fileOwner, teacher);
                         })
                         .map(FileDto::fromEntity)
                         .collect(Collectors.toList())

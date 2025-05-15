@@ -47,16 +47,14 @@ public class FolderService {
 
     public FolderDto getFolder(Long folderId, Long userId) {
         Folder folder =  findFolderById(folderId);
-
         User user = findUserById(userId);
-        //임시 teacher
-        User teacher = new User();
 
         // 연결된 선생님 찾기
-        /*
-        User teacher = userRepository.findTeacherByStudent0(user)
+        User teacher = null;
+        if (user.getTeacherId() != null) {
+            teacher = userRepository.findById(user.getTeacherId())
                     .orElseThrow(() -> new RuntimeException("선생님을 찾을 수 없습니다."));
-         */
+        }
         return FolderDto.fromEntity(folder, user, teacher);
     }
 
@@ -90,15 +88,12 @@ public class FolderService {
         List<User> accessibleUsers = new ArrayList<>();
         accessibleUsers.add(user);
 
-
         // 연결된 선생님이 있다면 추가
-        /*
-        userRepository.findTeacherIdByStudentId(userId).ifPresent(teacherId -> {
-            User teacher = userRepository.findById(teacherId)
+        if (user.getTeacherId() != null) {
+            User teacher = userRepository.findById(user.getTeacherId())
                     .orElseThrow(() -> new RuntimeException("선생님을 찾을 수 없습니다."));
             accessibleUsers.add(teacher);
-        });
-        */
+        }
 
         // 이 유저들에 해당하는 루트 폴더 조회
         return folderRepository.findByUserInAndParentFolderIsNull(accessibleUsers).stream()
