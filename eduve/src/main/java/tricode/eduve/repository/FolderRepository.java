@@ -15,7 +15,5 @@ public interface FolderRepository extends JpaRepository<Folder, Long> {
 
     Optional<Folder> findById(Long id);
 
-    //List<Folder> findByUserAndParentFolderIsNull(User user);
-
     List<Folder> findByUserInAndParentFolderIsNull(List<User> accessibleUsers);
 }

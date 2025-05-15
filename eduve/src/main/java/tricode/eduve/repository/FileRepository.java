@@ -17,5 +17,5 @@ public interface FileRepository extends JpaRepository <File, Long> {
     // 파일 이름으로 검색 (포함 검색, 대소문자 구분 없이)
     List<File> findByFileNameContainingIgnoreCase(String keyword);
 
-    List<File> findByUserAndFolderIsNull(User user);
+    List<File> findByUserInAndFolderIsNull(List<User> accessibleUsers);
 }
