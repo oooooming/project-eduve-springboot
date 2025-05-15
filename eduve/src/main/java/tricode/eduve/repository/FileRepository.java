@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import tricode.eduve.domain.File;
 import tricode.eduve.domain.User;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface FileRepository extends JpaRepository <File, Long> {

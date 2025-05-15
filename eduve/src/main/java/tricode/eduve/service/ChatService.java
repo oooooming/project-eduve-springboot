@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import tricode.eduve.domain.Message;
+import tricode.eduve.domain.Preference;
 import tricode.eduve.domain.User;
 import tricode.eduve.dto.request.MessageRequestDto;
 import tricode.eduve.dto.response.message.MessageUnitDto;
@@ -25,6 +26,7 @@ public class ChatService {
     private final FlaskComponent flaskComponent;
     private final ConversationService conversationService;
     private final UserRepository userRepository;
+    private final UserCharacterService userCharacterService;
 
     /*
     // 질문을 저장하고 비동기적으로 ChatGPT API 호출
@@ -112,8 +114,11 @@ public class ChatService {
         // 질문 유사도 검색
         String similarDocuments = flaskComponent.findSimilarDocuments(userMessage, userId, teacher.getUserId());
 
+        // 사용자가 설정한 TONE/DISCRIPTIONLEVEL 조회
+        Preference userPreference = userCharacterService.getPrefernceByUserId(userId); // tone, explanationLevel 포함
+
         // 2. ChatGPT API 호출
-        ResponseEntity<String> response= chatGptClient.chat(userMessage, similarDocuments);
+        ResponseEntity<String> response= chatGptClient.chat(userMessage, similarDocuments, userPreference);
         String parsedResponse = parseResponse(response);
 
         // 3. 봇 응답 저장
