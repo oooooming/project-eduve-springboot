@@ -60,9 +60,7 @@ public class TeacherJoinService {
         userRepository.flush();
         System.out.println("flush 후 저장 시도됨");
 
-        return savedUser;
 
-/*
         // 기본 캐릭터 가져오기 (characterId = 1)
         AllCharacter defaultCharacter = allCharacterRepository.findById(1L)
                 .orElseThrow(() -> new IllegalArgumentException("기본 캐릭터를 찾을 수 없습니다."));
@@ -72,7 +70,7 @@ public class TeacherJoinService {
         userCharacterRepository.save(defaultUserCharacter);
 
         System.out.println("UserCharacter 저장됨: " + defaultUserCharacter);
-*/
 
+        return savedUser;
     }
 }
