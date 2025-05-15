@@ -6,6 +6,7 @@ import tricode.eduve.domain.User;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 public interface FileRepository extends JpaRepository <File, Long> {
     // 이름순 (오름차순)
@@ -18,4 +19,6 @@ public interface FileRepository extends JpaRepository <File, Long> {
     List<File> findByFileNameContainingIgnoreCase(String keyword);
 
     List<File> findByUserInAndFolderIsNull(List<User> accessibleUsers);
+
+    Optional<File> findByFileName(String fileName);
 }
