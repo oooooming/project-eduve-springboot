@@ -70,6 +70,7 @@ public class FileController {
         return ResponseEntity.ok(fileResponseDto);
     }
 
+    /*
     // 파일 최신순 정렬
     @GetMapping("/sort/date")
     public ResponseEntity<List<FileResponseDto>> getFilesSortedByDate() {
@@ -81,6 +82,7 @@ public class FileController {
     public ResponseEntity<List<FileResponseDto>> getFilesSortedByName() {
         return ResponseEntity.ok(fileService.getFilesOrderedByName());
     }
+    */
 
     // 파일 이름명 검색
     @GetMapping("/search")

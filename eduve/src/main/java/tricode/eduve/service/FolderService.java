@@ -8,7 +8,7 @@ import tricode.eduve.domain.File;
 import tricode.eduve.domain.Folder;
 import tricode.eduve.domain.User;
 import tricode.eduve.dto.response.FolderDto;
-import tricode.eduve.dto.response.RootFolderDto;
+import tricode.eduve.dto.response.RootItemDto;
 import tricode.eduve.repository.FileRepository;
 import tricode.eduve.repository.FolderRepository;
 import tricode.eduve.repository.UserRepository;
@@ -44,19 +44,11 @@ public class FolderService {
         return FolderDto.fromEntity(folderRepository.save(folder));
     }
 
+    // 특정 폴더 하나 조회
     public FolderDto getFolder(Long folderId) {
         Folder folder =  folderRepository.findById(folderId)
                 .orElseThrow(() -> new RuntimeException("폴더를 찾을 수 없습니다."));
         return FolderDto.fromEntity(folder);
-    }
-
-    public List<FolderDto> getAllFolders(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
-
-        return folderRepository.findAll().stream()
-                .map(FolderDto::fromEntity)
-                .collect(Collectors.toList());
     }
 
     // 폴더 삭제
@@ -70,12 +62,16 @@ public class FolderService {
         return file.getFullPath(); // 저장된 path가 아닌 동적 계산된 path 반환
     }
 
-    public List<RootFolderDto> getRootFoldersByUser(Long userId) {
+    // 루트 폴더/파일 조회
+    public List<RootItemDto> getRootItemByUser(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
 
+        List<Folder> rootFolderList = folderRepository.findByUserAndParentFolderIsNull(user);
+        List<File> rootFileList = fileRepository.findByUserAndFolderIsNull(user);
+
         return folderRepository.findByUserAndParentFolderIsNull(user).stream()
-                .map(RootFolderDto::fromEntity)
+                .map(RootItemDto::fromEntity)
                 .collect(Collectors.toList());
     }
 

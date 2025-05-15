@@ -29,6 +29,7 @@ public class FileService {
         return FileResponseDto.from(file);
     }
 
+    /*
     // 이름순 정렬
     @Transactional
     public List<FileResponseDto> getFilesOrderedByName() {
@@ -46,6 +47,7 @@ public class FileService {
                 .map(FileResponseDto::from)
                 .collect(Collectors.toList());
     }
+    */
 
     // 파일 이름 검색
     @Transactional
@@ -55,6 +57,7 @@ public class FileService {
                 .map(FileResponseDto::from)
                 .collect(Collectors.toList());
     }
+
 
     // 파일 삭제
     @Transactional

@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import tricode.eduve.dto.response.FolderPathDto;
 import tricode.eduve.dto.response.FileDto;
 import tricode.eduve.dto.response.FolderDto;
-import tricode.eduve.dto.response.RootFolderDto;
+import tricode.eduve.dto.response.RootItemDto;
 import tricode.eduve.service.FolderService;
 
 import java.util.List;
@@ -35,8 +35,8 @@ public class FolderController {
 
     // 최상위 폴더 목록 조회
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<RootFolderDto>> getRootFoldersByUse(@PathVariable Long userId) {
-        return ResponseEntity.ok(folderService.getRootFoldersByUser(userId));
+    public ResponseEntity<List<RootItemDto>> getRootItemByUse(@PathVariable Long userId) {
+        return ResponseEntity.ok(folderService.getRootItemByUser(userId));
     }
 
     // 폴더 삭제
