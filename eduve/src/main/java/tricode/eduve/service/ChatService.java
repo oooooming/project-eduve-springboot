@@ -142,7 +142,7 @@ public class ChatService {
         Message botMessage = Message.createBotResponse(message.getConversation(), parsedResponse, message);
         conversationService.saveBotMessage(botMessage);
 
-        return MessageUnitDto.from(message,botMessage);
+        return MessageUnitDto.from(message,botMessage, fileNameAndUrl);
     }
 
     // 유사도 검색 결과에서 파일 제목과 url 추출
