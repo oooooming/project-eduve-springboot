@@ -9,10 +9,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import tricode.eduve.domain.Message;
 import tricode.eduve.domain.Preference;
+import tricode.eduve.domain.User;
 import tricode.eduve.dto.request.MessageRequestDto;
 import tricode.eduve.dto.response.message.MessageUnitDto;
 import tricode.eduve.global.ChatGptClient;
 import tricode.eduve.global.FlaskComponent;
+import tricode.eduve.repository.UserRepository;
 
 
 @Service
@@ -23,6 +25,7 @@ public class ChatService {
     private final ChatGptClient chatGptClient;
     private final FlaskComponent flaskComponent;
     private final ConversationService conversationService;
+    private final UserRepository userRepository;
     private final UserCharacterService userCharacterService;
 
     /*
@@ -96,8 +99,20 @@ public class ChatService {
         // 1. Conversation 처리 (주제 유사도검색 + 1시간 기준)
         Message message = conversationService.processUserMessage(userId, userMessage);
 
+
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
+
+        //임시 teacher
+        User teacher = new User();
+        // 연결된 선생님 찾기
+        /*
+        User teacher = userRepository.findTeacherByStudent0(user)
+                    .orElseThrow(() -> new RuntimeException("선생님을 찾을 수 없습니다."));
+         */
         // 질문 유사도 검색
-        String similarDocuments = flaskComponent.findSimilarDocuments(userMessage);
+        String similarDocuments = flaskComponent.findSimilarDocuments(userMessage, userId, teacher.getUserId());
 
         // 사용자가 설정한 TONE/DISCRIPTIONLEVEL 조회
         Preference userPreference = userCharacterService.getPrefernceByUserId(userId); // tone, explanationLevel 포함

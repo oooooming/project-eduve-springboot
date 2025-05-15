@@ -24,4 +24,11 @@ public class MessageLikeController {
     public ResponseEntity<String> deleteMessageLike(@PathVariable Long messageId) {
         return ResponseEntity.ok(messageLikeService.deleteMessageLike(messageId));
     }
+
+
+    @PostMapping("/analyze/{userId}")
+    public ResponseEntity<String> analyzePreference(@PathVariable Long userId) {
+        messageLikeService.runAnalysis(userId);
+        return ResponseEntity.ok("좋아요 기반 선호 스타일 분석 완료");
+    }
 }
