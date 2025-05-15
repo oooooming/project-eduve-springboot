@@ -21,11 +21,11 @@ public class DataInitializer {
 
         if (allCharacterRepository.count() == 0) {
             List<AllCharacter> defaultCharacters = List.of(
-                    new AllCharacter(1L, "용용이", "https://example.com/img1.png"),
-                    new AllCharacter(2L, "멍멍이", "https://example.com/img2.png"),
-                    new AllCharacter(3L, "다람이", "https://example.com/img3.png"),
-                    new AllCharacter(4L, "냥냥이", "https://example.com/img4.png"),
-                    new AllCharacter(5L, "감자", "https://example.com/img5.png")
+                    new AllCharacter(1L, "용용이", "https://eduve1.s3.ap-northeast-2.amazonaws.com/dragon.webp"),
+                    new AllCharacter(2L, "멍멍이", "https://eduve1.s3.ap-northeast-2.amazonaws.com/dog.webp"),
+                    new AllCharacter(3L, "다람이", "https://eduve1.s3.ap-northeast-2.amazonaws.com/squirrel.webp"),
+                    new AllCharacter(4L, "냥냥이", "https://eduve1.s3.ap-northeast-2.amazonaws.com/cat.webp"),
+                    new AllCharacter(5L, "감자", "https://eduve1.s3.ap-northeast-2.amazonaws.com/potato.webp")
             );
 
             allCharacterRepository.saveAll(defaultCharacters);
