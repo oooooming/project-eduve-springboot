@@ -8,12 +8,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import tricode.eduve.domain.Message;
+import tricode.eduve.domain.MessageLikePreference;
 import tricode.eduve.domain.Preference;
 import tricode.eduve.domain.User;
 import tricode.eduve.dto.request.MessageRequestDto;
 import tricode.eduve.dto.response.message.MessageUnitDto;
 import tricode.eduve.global.ChatGptClient;
 import tricode.eduve.global.FlaskComponent;
+import tricode.eduve.repository.MessageLikePreferenceRepository;
+import tricode.eduve.repository.MessageRepository;
 import tricode.eduve.repository.UserRepository;
 
 
@@ -27,6 +30,7 @@ public class ChatService {
     private final ConversationService conversationService;
     private final UserRepository userRepository;
     private final UserCharacterService userCharacterService;
+    private final MessageLikePreferenceRepository messageLikePreferenceRepository;
 
     /*
     // 질문을 저장하고 비동기적으로 ChatGPT API 호출
@@ -99,26 +103,33 @@ public class ChatService {
         // 1. Conversation 처리 (주제 유사도검색 + 1시간 기준)
         Message message = conversationService.processUserMessage(userId, userMessage);
 
-
-
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
 
-        //임시 teacher
-        User teacher = new User();
         // 연결된 선생님 찾기
-        /*
-        User teacher = userRepository.findTeacherByStudent0(user)
+        User teacher = null;
+        if (user.getTeacherId() != null) {
+            teacher = userRepository.findById(user.getTeacherId())
                     .orElseThrow(() -> new RuntimeException("선생님을 찾을 수 없습니다."));
-         */
+        }
         // 질문 유사도 검색
         String similarDocuments = flaskComponent.findSimilarDocuments(userMessage, userId, teacher.getUserId());
 
         // 사용자가 설정한 TONE/DISCRIPTIONLEVEL 조회
         Preference userPreference = userCharacterService.getPrefernceByUserId(userId); // tone, explanationLevel 포함
 
-        // 2. ChatGPT API 호출
-        ResponseEntity<String> response= chatGptClient.chat(userMessage, similarDocuments, userPreference);
+        // 사용자 좋아요 분석 조회
+        String analysisResult = messageLikePreferenceRepository.findByUser(user)
+                .map(MessageLikePreference::getAnalysisResult)
+                .orElse(null);
+
+        // 좋아요 분석이 있으면 chatGPT로 같이 보내기
+        ResponseEntity<String> response;
+        if (analysisResult != null && !analysisResult.isBlank()) {
+            response = chatGptClient.chat(userMessage, similarDocuments, userPreference, analysisResult);
+        } else {
+            response = chatGptClient.chat(userMessage, similarDocuments, userPreference, null);
+        }
         String parsedResponse = parseResponse(response);
 
         // 3. 봇 응답 저장
