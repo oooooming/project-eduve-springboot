@@ -1,4 +1,4 @@
-package tricode.eduve.dto.response;
+package tricode.eduve.dto.response.file_folder;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

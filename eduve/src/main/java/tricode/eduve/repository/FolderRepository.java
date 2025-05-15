@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import tricode.eduve.domain.Folder;
 import tricode.eduve.domain.User;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,5 +15,7 @@ public interface FolderRepository extends JpaRepository<Folder, Long> {
 
     Optional<Folder> findById(Long id);
 
-    List<Folder> findByUserAndParentFolderIsNull(User user);
+    //List<Folder> findByUserAndParentFolderIsNull(User user);
+
+    List<Folder> findByUserInAndParentFolderIsNull(List<User> accessibleUsers);
 }
