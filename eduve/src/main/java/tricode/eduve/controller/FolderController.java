@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import tricode.eduve.dto.response.file_folder.FolderPathDto;
 import tricode.eduve.dto.response.file_folder.FileDto;
 import tricode.eduve.dto.response.file_folder.FolderDto;
-import tricode.eduve.dto.response.file_folder.RootFolderDto;
+import tricode.eduve.dto.response.file_folder.RootItemDto;
 import tricode.eduve.service.FolderService;
 
 import java.util.List;
@@ -30,14 +30,16 @@ public class FolderController {
     // 폴더 하나 조회
     @GetMapping("/user/{userId}/folder/{folderId}")
     public ResponseEntity<FolderDto> getFolder(@PathVariable Long folderId,
-                                               @PathVariable Long userId) {
-        return ResponseEntity.ok(folderService.getFolder(folderId, userId));
+                                               @PathVariable Long userId,
+                                               @RequestParam(defaultValue = "default") String sort) {
+        return ResponseEntity.ok(folderService.getFolder(folderId, userId, sort));
     }
 
     // 최상위 폴더 목록 조회
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<RootFolderDto>> getRootFoldersByUse(@PathVariable Long userId) {
-        return ResponseEntity.ok(folderService.getRootFoldersByUser(userId));
+    public ResponseEntity<List<RootItemDto>> getRootItemByUse(@PathVariable Long userId,
+                                                              @RequestParam(defaultValue = "default") String sort) {
+        return ResponseEntity.ok(folderService.getRootItemByUser(userId, sort));
     }
 
     // 폴더 삭제
