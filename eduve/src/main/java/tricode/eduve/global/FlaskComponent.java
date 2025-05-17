@@ -79,6 +79,7 @@ public class FlaskComponent {
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
         body.add("file", new MultipartInputStreamFileResource(file.getInputStream(), file.getOriginalFilename()));
         body.add("userId", userId.toString());  // user_id를 form-data에 추가
+        body.add("title", file.getOriginalFilename()); // ✅ 추가된 부분
 
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 

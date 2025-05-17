@@ -124,7 +124,7 @@ public class ChatService {
         }
 
         // 유사도검색 결과에서 파일명 추출해서 파일 url 반환
-        List<String> fileNameAndUrl = extractFirstFileInfo(similarDocuments);
+        List<String> filenamePageAndUrl = extractFirstFileInfo(similarDocuments);
 
         // 사용자가 설정한 TONE/DISCRIPTIONLEVEL 조회
         Preference userPreference = userCharacterService.getPrefernceByUserId(userId); // tone, explanationLevel 포함
@@ -147,7 +147,7 @@ public class ChatService {
         Message botMessage = Message.createBotResponse(message.getConversation(), parsedResponse, message);
         conversationService.saveBotMessage(botMessage);
 
-        return MessageUnitDto.from(message,botMessage, fileNameAndUrl);
+        return MessageUnitDto.from(message,botMessage, filenamePageAndUrl);
     }
 
     // 유사도 검색 결과에서 파일 제목과 url 추출
@@ -172,13 +172,16 @@ public class ChatService {
             return null;
         }
 
-        List<String> filenameAndUrl = new ArrayList<>();
-        filenameAndUrl.add(fileName);
+        String page = firstResult.path("page").asText(); // 페이지 번호 문자열로 파싱
+
+        List<String> filenamePageAndUrl = new ArrayList<>();
+        filenamePageAndUrl.add(fileName);
+        filenamePageAndUrl.add(page); // 페이지 추가
 
         Optional<File> file = fileRepository.findByFileName(fileName);
         String url = file.map(File::getFileUrl).orElse(null);
-        filenameAndUrl.add(url);
+        filenamePageAndUrl.add(url);
 
-        return filenameAndUrl;
+        return filenamePageAndUrl;
     }
 }
