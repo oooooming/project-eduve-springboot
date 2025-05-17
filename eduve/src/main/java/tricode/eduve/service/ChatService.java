@@ -106,17 +106,22 @@ public class ChatService {
         // 1. Conversation 처리 (주제 유사도검색 + 1시간 기준)
         Message message = conversationService.processUserMessage(userId, userMessage);
 
-        User user = userRepository.findById(userId)
+        User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
 
-        // 연결된 선생님 찾기
-        User teacher = null;
-        if (user.getTeacherId() != null) {
-            teacher = userRepository.findById(user.getTeacherId())
-                    .orElseThrow(() -> new RuntimeException("선생님을 찾을 수 없습니다."));
+        String similarDocuments = null;
+        if (user.getRole().equals("ROLE_Student")) {
+            Optional<User> teacher = userRepository.findByUserId(user.getTeacherId());
+            if (teacher.isPresent()) {
+                // 질문 유사도 검색
+                similarDocuments = flaskComponent.findSimilarDocuments(userMessage, userId, teacher.get());
+            }else{
+                similarDocuments = flaskComponent.findSimilarDocuments(userMessage, userId, null);
+            }
+        }else{
+            // 질문 유사도 검색
+            similarDocuments = flaskComponent.findSimilarDocuments(userMessage, userId, null);
         }
-        // 질문 유사도 검색
-        String similarDocuments = flaskComponent.findSimilarDocuments(userMessage, userId, teacher.getUserId());
 
         // 유사도검색 결과에서 파일명 추출해서 파일 url 반환
         List<String> fileNameAndUrl = extractFirstFileInfo(similarDocuments);

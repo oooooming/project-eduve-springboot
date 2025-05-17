@@ -7,6 +7,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import tricode.eduve.domain.User;
 
 import java.io.IOException;
 import java.util.Map;
@@ -23,7 +24,7 @@ public class FlaskComponent {
 
 
     // 유사도 검색 flask API 호출
-    public String findSimilarDocuments(String question, Long userId, Long teacherId) {
+    public String findSimilarDocuments(String question, Long userId, User teacher) {
         //String flaskApiUrl = "http://13.209.87.47:5000/search";  // Flask API URL (로컬에서 Flask 실행 중이라면 localhost 사용)
         String flaskApiUrl = "http://localhost:5000/search";
 
@@ -31,8 +32,15 @@ public class FlaskComponent {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        // 요청 바디 설정 (JSON 포맷)
-        String requestBody = "{ \"query\": \"" + question + "\", \"userId\": \"" + userId + "\", \"teacherId\": \"" + teacherId + "\" }";
+        String requestBody;
+        if(teacher != null){
+            // 요청 바디 설정 (JSON 포맷)
+            requestBody = "{ \"query\": \"" + question + "\", \"userId\": \"" + userId + "\", \"teacherId\": \"" + teacher.getUserId() + "\" }";
+        }else{
+            // 요청 바디 설정 (JSON 포맷)
+            requestBody = "{ \"query\": \"" + question + "\", \"userId\": \"" + userId + "\" }";
+        }
+
 
         // HTTP 요청 엔티티 생성
         HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
