@@ -112,10 +112,14 @@ public class ChatService {
 
         String similarDocuments = null;
         if (user.getRole().equals("ROLE_Student")) {
-            Optional<User> teacher = userRepository.findByUserId(user.getTeacherId());
+            System.out.println("진입 성공");
+            Optional<User> teacher = userRepository.findByUsernameAndRole(user.getTeacherUsername(), "ROLE_Teacher");
             if (teacher.isPresent()) {
                 // 질문 유사도 검색
                 similarDocuments = flaskComponent.findSimilarDocuments(userMessage, userId, teacher.get());
+                // 선생님 잘 찾았는지 로그 찍기
+                User teacherUser = teacher.get();
+                System.out.println("teacher username: " + teacherUser.getUsername());
             }else{
                 similarDocuments = flaskComponent.findSimilarDocuments(userMessage, userId, null);
             }
