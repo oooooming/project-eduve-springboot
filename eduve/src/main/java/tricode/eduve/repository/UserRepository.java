@@ -1,6 +1,8 @@
 package tricode.eduve.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import tricode.eduve.domain.User;
 
 import java.util.Optional;
@@ -13,5 +15,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     User findByUsername(String username);
     Optional<User> findByUserId(Long userId);
 
-    Optional<User> findByTeacherUsername(String teacherUsername);
+    @Query("SELECT u FROM User u WHERE u.username = :username AND u.role = 'ROLE_Teacher'")
+    Optional<User> findByTeacherUsername(@Param("username") String username);
 }
