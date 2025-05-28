@@ -53,7 +53,7 @@ public class FolderService {
         // 연결된 선생님 찾기
         User teacher = null;
         if (user.getTeacherUsername() != null) {
-            teacher = userRepository.findByTeacherUsername(user.getTeacherUsername())
+            teacher = userRepository.findByUsernameAndRole(user.getTeacherUsername(), "ROLE_Teacher")
                     .orElseThrow(() -> new RuntimeException("선생님을 찾을 수 없습니다."));
         }
         return FolderDto.fromEntity(folder, user, teacher, sort);
@@ -83,7 +83,7 @@ public class FolderService {
 
         // 연결된 선생님이 있다면 추가
         if (user.getTeacherUsername() != null) {
-            User teacher = userRepository.findByTeacherUsername(user.getTeacherUsername())
+            User teacher = userRepository.findByUsernameAndRole(user.getTeacherUsername(), "ROLE_Teacher")
                     .orElseThrow(() -> new RuntimeException("선생님을 찾을 수 없습니다."));
             accessibleUsers.add(teacher);
         }
