@@ -36,7 +36,7 @@ public class User extends CreatedTimeEntity {
     private String role; // 학생 선생님 구분
 
     @Column(nullable = true)
-    private Long teacherId; // 학생이라면 선생님Id 저장, 선생님은 null
+    private String teacherUsername; // 학생이라면 선생님 로그인용 아이디 저장, 선생님은 null
 
     @ManyToMany
     @JoinTable(

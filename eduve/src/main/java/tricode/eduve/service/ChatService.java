@@ -111,7 +111,7 @@ public class ChatService {
 
         String similarDocuments = null;
         if (user.getRole().equals("ROLE_Student")) {
-            Optional<User> teacher = userRepository.findByUserId(user.getTeacherId());
+            Optional<User> teacher = userRepository.findByTeacherUsername(user.getTeacherUsername());
             if (teacher.isPresent()) {
                 // 질문 유사도 검색
                 similarDocuments = flaskComponent.findSimilarDocuments(userMessage, userId, teacher.get());
