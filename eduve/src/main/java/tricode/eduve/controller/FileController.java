@@ -3,6 +3,7 @@ package tricode.eduve.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import tricode.eduve.dto.response.file_folder.FileResponseDto;
@@ -26,7 +27,7 @@ public class FileController {
     @PostMapping("/voice")
     public ResponseEntity<FileUploadResponseDto> uploadVoiceFile(@RequestParam("file") MultipartFile file,
                                                                  @RequestParam("userId") Long userId,
-                                                                 @RequestParam("folderId") Long folderId) throws IOException {
+                                                                 @RequestParam(value = "folderId", required = false) Long folderId) throws IOException {
         try {
             FileUploadResponseDto responseDto = fileUploadService.uploadAudioAndTranscribe(file, userId, folderId);
 
@@ -38,15 +39,16 @@ public class FileController {
                     .body(null);
         }
     }
+
     // 일반 파일 업로드
     @PostMapping("/text")
-    public ResponseEntity<FileUploadResponseDto> uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("userId") Long userId, @RequestParam("folderId") Long folderId) {
+    public ResponseEntity<FileUploadResponseDto> uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("userId") Long userId, @RequestParam(value = "folderId", required = false) Long folderId) {
         try {
             // 1. 파일을 S3에 업로드
             FileResponseDto fileDto = fileUploadService.uploadFileToS3(file, userId, folderId);
 
             // 2. Flask로 파일 전달하여 임베딩 수행
-            String flaskResult = fileUploadService.embedDocument(file, userId);
+            String flaskResult = fileUploadService.embedDocument(file, fileDto.getFileName(), userId);
 
             // 3. 결과 합쳐서 JSON으로 반환
             FileUploadResponseDto responseDto = FileUploadResponseDto.builder()

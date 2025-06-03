@@ -4,6 +4,7 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import tricode.eduve.domain.File;
@@ -33,6 +34,7 @@ public class FileUploadService {
     private final FolderRepository folderRepository;
     private final FlaskComponent flaskComponent;
     private final DagloSTTService dagloSTTService;
+    private final FileService fileService;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
@@ -129,7 +131,7 @@ public class FileUploadService {
         FileResponseDto textFileInfo = uploadFileToS3(textMultipartFile, userId, folderId);
 
         // 5. Flask 임베딩 호출
-        String flaskResult = embedDocument(textMultipartFile, userId);
+        String flaskResult = embedDocument(textMultipartFile, textFileInfo.getFileName(), userId);
 
         return FileUploadResponseDto.builder()
                 .fileInfo(List.of(audioFileInfo, textFileInfo))
@@ -139,14 +141,14 @@ public class FileUploadService {
 
     public FileResponseDto uploadFileToS3(MultipartFile file, Long userId, Long folderId) throws IOException {
         // 파일 이름과 URL 생성
-        String fileName = file.getOriginalFilename();
+        String originalFileName = file.getOriginalFilename();
 
-        if (fileName == null || fileName.isBlank()) {
+        if (originalFileName == null || originalFileName.isBlank()) {
             throw new IOException("파일 이름이 유효하지 않습니다.");
         }
 
         // 파일 확장자 추출
-        String extension = StringUtils.getFilenameExtension(fileName);
+        String extension = StringUtils.getFilenameExtension(originalFileName);
         if (extension == null) {
             throw new IOException("파일 확장자를 확인할 수 없습니다.");
         }
@@ -162,15 +164,6 @@ public class FileUploadService {
             default -> throw new IOException("지원하지 않는 파일 형식입니다: " + extension);
         };
 
-        String fileUrl = "https://" + bucket + ".s3." + region + ".amazonaws.com/" + fileName;
-
-        // S3에 파일 업로드
-        ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentType(file.getContentType());
-        metadata.setContentLength(file.getSize());
-
-        amazonS3Client.putObject(bucket, fileName, file.getInputStream(), metadata);
-
         //  사용자 조회
         Optional<User> userOptional = userRepository.findByUserId(userId);
         if (userOptional.isEmpty()) {
@@ -180,30 +173,55 @@ public class FileUploadService {
         User user = userOptional.get();
 
         // 폴더 조회
-        Optional<Folder> folderOptional = folderRepository.findById(folderId);
-        if (folderOptional.isEmpty()) {
-            throw new IOException("Folder not found");
+        Folder folder = null;
+        if(folderId != null) {
+            Optional<Folder> folderOptional = folderRepository.findById(folderId);
+            if (folderOptional.isEmpty()) {
+                throw new IOException("Folder not found");
+            }
+            folder = folderOptional.get();
         }
-        Folder folder = folderOptional.get();
 
-        // File 엔티티 객체 생성
+        // 파일 이름 중복 검사 및 이름 결정
+        String baseName = originalFileName;
+        if (originalFileName.contains(".")) {
+            baseName = originalFileName.substring(0, originalFileName.lastIndexOf('.'));
+        }
+
+        String newFileName = baseName + "." + extension;
+        int count = 1;
+        while (fileRepository.existsByUserAndFileName(user, userId + "^" + newFileName)) {
+            count++;
+            newFileName = baseName + count + "." + extension;
+        }
+
+        String storedFileName = userId + "^" + newFileName;
+        String fileUrl = "https://" + bucket + ".s3." + region + ".amazonaws.com/" + storedFileName;
+
+        // S3에 업로드
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentType(file.getContentType());
+        metadata.setContentLength(file.getSize());
+
+        amazonS3Client.putObject(bucket, storedFileName, file.getInputStream(), metadata);
+
+        // File 엔티티 생성 및 저장
         File fileEntity = File.builder()
-                .fileName(fileName)
-                .fileType(fileType)  // 파일 타입 설정
+                .fileName(storedFileName)  // DB에는 userId^파일명 저장
+                .fileType(fileType)
                 .fileUrl(fileUrl)
                 .user(user)
-                .folder(folder) // 폴더 설정
+                .folder(folder)
                 .build();
 
-        // 파일 엔티티를 DB에 저장
         fileRepository.save(fileEntity);
 
-        // return fileUrl; // 성공적으로 파일 URL 반환
-        return FileResponseDto.from(fileEntity);
+        // 프론트에는 userId^ 제거해서 반환
+        return FileResponseDto.from(fileEntity, userId + "^");
     }
 
-    public String embedDocument(MultipartFile file, Long userId) throws IOException {
-        return flaskComponent.embedDocument(file, userId);
+    public String embedDocument(MultipartFile file, String fileName, Long userId) throws IOException {
+        return flaskComponent.embedDocument(file, fileName, userId);
     }
 
     private java.io.File convertMultipartToFile(MultipartFile file) throws IOException {
