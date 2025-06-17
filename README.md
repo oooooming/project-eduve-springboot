@@ -5,7 +5,7 @@ Eduve는 음성 인식(STT), OCR 문자 추출, 채팅 메시지 저장 등 기�
 <br>
 <br>
 
-## 📦 프로젝트 구성 레포
+## 📦 프로젝트 구성 레포지토리
 
 본 프로젝트는 다음 세 개의 레포지토리로 구성되어 있습니다:
 
@@ -20,13 +20,13 @@ Eduve는 음성 인식(STT), OCR 문자 추출, 채팅 메시지 저장 등 기�
 <br>
 
 
-## 1. Spring Boot (eduve-springboot)
+## Spring Boot (eduve-springboot)
 
-RESTful API, 사용자 인증, DB 관리, STT, OCR 등 핵심 백엔드 기능을 담당합니다.
+Springboot 서버는 RESTful API, 사용자 인증, DB 관리, STT, OCR 등 eduve의 핵심 백엔드 기능을 담당합니다.
 
 <br>
 
-### 📁 주요 디렉토리 구조
+## 📁 주요 디렉토리 구조
 
 ```
 eduve/
@@ -92,7 +92,7 @@ eduve/
 
 #### 1. 환경 요구사항
 
-- Java 17 이상
+- Java 17
 - Gradle 7.5+
 - MySQL 8.0
 - Git
@@ -136,13 +136,11 @@ sh scripts/start.sh
 - 기본 포트는 8080입니다. 실행 후 http://localhost:8080 에서 서버가 동작합니다.
 
 
+
+## 
+
 <br>
 <br>
-<br>
-
----
-
-
 
 
 ## ✅ How to Test
