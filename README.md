@@ -160,8 +160,10 @@ sh scripts/start.sh
 
 
 #### ✨ 테스트 예시: 채팅 시작 API
-*** 대상 API: POST /chat/start/{userId} ***
-*** 입력 예시: ***
+
+**대상 API: POST /chat/start/{userId}**
+
+**입력 예시:**
 
 ```json
 {
@@ -169,11 +171,11 @@ sh scripts/start.sh
 }
 ```
 
-*** 검증 포인트:***
+**검증 포인트:**
 - Bot 응답 메시지 존재
 - 상태 코드 200 OK
 
-***테스트 코드 (일부)***
+**테스트 코드 (일부)**
 ```java
 mockMvc.perform(post("/chat/start/1")
     .param("graph", "1")
