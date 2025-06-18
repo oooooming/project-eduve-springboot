@@ -1,6 +1,6 @@
-# Eduve: RAG 기반 AI 챗봇 서비스
+# Edu've: RAG 기반 AI 챗봇 서비스
 
-Eduve는 음성 인식(STT), OCR 문자 추출, 채팅 메시지 저장 등 기능을 제공하는 Spring Boot 기반의 교육 지원 백엔드 서버입니다. 이 프로젝트는 JWT 인증과 RESTful API를 기반으로 하며, 학생과 교사 간 커뮤니케이션을 지원합니다.
+Edu've는 RAG(Retrieval-Augmented Generation) 기반의 AI 챗봇 학습 지원 서비스로, 강사와 수강생 문서 기반 질문 응답을 지원합니다. 학습자료 아카이빙, 개인 맞춤형 챗봇, 실시간 질의응답 기능을 포함하며, Spring Boot와 Flask로 백엔드를 구성하고 React 기반 웹 인터페이스를 제공합니다. 학습 환경에서의 커뮤니케이션과 정보 접근성을 향상시키는 것을 목표로 합니다.
 
 <br>
 <br>
