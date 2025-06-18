@@ -161,28 +161,31 @@ sh scripts/start.sh
 ### 1. 채팅 시작 테스트
 
 **대상 API: POST /chat/start/{userId}**
+**설명: 사용자의 질문을 입력하면, 설정된 캐릭터 말투 및 설명 난이도에 맞춰 챗봇이 응답합니다.**
 
 **입력 예시:**
 
 ```json
 {
-  "question": "안녕하세요"
+  "question": "안녕하세요."
 }
 ```
 
 **검증 포인트:**
-- Bot 응답 메시지 존재
-- 상태 코드 200 OK
+- 상태 코드: 200 OK
+- userMessage.question 필드가 입력값과 동일한지 확인
+- botMessage.answer 필드가 비어 있지 않은지 확인 (GPT 응답 존재 여부)
 
 **테스트 코드 (일부)**
 ```java
-mockMvc.perform(post("/chat/start/1")
-    .param("graph", "0")
-    .param("url", "0")
-    .contentType(MediaType.APPLICATION_JSON)
-    .content("{\"question\": \"안녕하세요\"}"))
+mockMvc.perform(post("/chat/start/2")
+        .param("graph", "0")
+        .param("url", "0")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("{\"question\": \"안녕하세요.\"}"))
     .andExpect(status().isOk())
-    .andExpect(jsonPath("$.botMessage.message").exists());
+    .andExpect(jsonPath("$.userMessage.question").value("안녕하세요."))
+    .andExpect(jsonPath("$.botMessage.answer").isNotEmpty());
 ```
 
 **위치 기반 / 내용 기반 응답 테스트**
@@ -197,8 +200,7 @@ mockMvc.perform(post("/chat/start/1")
 ### 2. 캐릭터 설정 반영 테스트
 
 **대상 API: PATCH /userCharacter/{userId}**
-
-**목적: 사용자별 캐릭터 말투(tone), 설명 난이도(descriptionLevel), 이름(userCharacterName) 등을 설정**
+**설명: 사용자별 캐릭터 말투(tone)와 설명 난이도(descriptionLevel)를 변경하고, 해당 설정이 챗봇 응답에 반영되는지 확인합니다.**
 
 **입력 예시:**
 
@@ -230,9 +232,28 @@ mockMvc.perform(post("/chat/start/1")
   | `EXPERT`     | 전문가 수준의 심화 설명     |
 
 
-  **검증 포인트:**
+**검증 포인트:**
 - 상태 코드 200 OK
 - 응답 본문에 변경된 속성 반영 여부
+
+**연계 테스트 흐름**
+1. 캐릭터 설정 변경 요청
+2. 변경된 캐릭터 상태 확인 (userCharacterName, tone, descriptionLevel)
+3. 채팅 요청 → 응답이 해당 캐릭터 설정을 반영하고 있는지 확인
+
+
+**테스트 코드 (일부)**
+```java
+mockMvc.perform(patch("/user-character/2")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("{"
+            + "\"userCharacterName\": \"공감형 조언자\","
+            + "\"tone\": \"FRIENDLY\","
+            + "\"descriptionLevel\": \"EASY\""
+            + "}"))
+    .andExpect(status().isOk())
+    .andExpect(jsonPath("$.userCharacterName").value("공감형 조언자"));
+```
 
 
 <br>
@@ -241,36 +262,30 @@ mockMvc.perform(post("/chat/start/1")
 ## 📊 샘플 데이터 설명
 프로젝트에는 API 테스트용 샘플 데이터가 포함되어 있습니다.
 
-#### 1. 사용자 데이터 (users.csv)
-- 위치: src/main/resources/sample/users.csv
-- 형식: CSV
-```csv
-id,username,password,role
-1,teacher01,password123,ROLE_TEACHER
-2,student01,password456,ROLE_STUDENT
-```
 
-#### 2. 캐릭터 설정 (character_sample.json)
+#### 1. 캐릭터 설정 (character_sample.json)
 - 위치: src/main/resources/sample/character_sample.json
 - 형식: JSON
 
 ```json
-{
+[
   {
     "userCharacterName": "공감형 조언자",
     "tone": "FRIENDLY",
     "descriptionLevel": "EASY"
   },
-  
+
   {
     "userCharacterName": "논리적 안내자",
     "tone": "FORMAL",
     "descriptionLevel": "EXPERT"
   }
-}
+]
 ```
-- 이 파일을 기반으로 캐릭터 설정 테스트를 반복 수행하고, 채팅 시작 테스트를 통해 사용자 맞춤형 챗봇 응답이 잘 반영되는지 확인할 수 있습니다.
-
+- 다양한 캐릭터 설정(tone, 설명 난이도 등)을 테스트할 수 있는 샘플 데이터입니다.
+- 테스트 코드에서는 이 JSON을 참고해 직접 설정 값을 지정해 PATCH /user-character/{userId} API로 캐릭터를 변경하고,
+이후 POST /chat/start/{userId}를 통해 챗봇의 응답에 캐릭터 말투가 잘 반영되는지를 확인할 수 있습니다.
+- 이 파일을 기반으로 다양한 캐릭터 설정을 반복적으로 바꿔가며 테스트하는 데 유용합니다.
 
 <br>
 <br>
