@@ -150,16 +150,15 @@ sh scripts/start.sh
 ```bash
 ./gradlew test
 ```
-또는 IntelliJ에서 src/test/java/.../controller/ 또는 /service/ 내 테스트 클래스 실행
+또는 IntelliJ에서 src/test/java/.../controller/ 내 테스트 클래스 실행
 
 #### 테스트 구조
 | 디렉토리 경로                         | 설명            |
 | ------------------------------- | ------------- |
 | `src/test/java/.../controller/` | API 컨트롤러 테스트  |
-| `src/test/java/.../service/`    | 서비스 로직 단위 테스트 |
 
 
-#### ✨ 테스트 예시: 채팅 시작 API
+### 1. 채팅 시작 테스트
 
 **대상 API: POST /chat/start/{userId}**
 
@@ -178,13 +177,62 @@ sh scripts/start.sh
 **테스트 코드 (일부)**
 ```java
 mockMvc.perform(post("/chat/start/1")
-    .param("graph", "1")
-    .param("url", "123")
+    .param("graph", "0")
+    .param("url", "0")
     .contentType(MediaType.APPLICATION_JSON)
     .content("{\"question\": \"안녕하세요\"}"))
     .andExpect(status().isOk())
     .andExpect(jsonPath("$.botMessage.message").exists());
 ```
+
+**위치 기반 / 내용 기반 응답 테스트**
+이 프로젝트는 질문 입력 시, 다음 두 방식으로 챗봇 응답의 정확도를 검증할 수 있습니다:
+| 유형        | 설명                                                     |
+| --------- | ------------------------------------------------------ |
+| **위치 기반** | 질문에 대해 응답이 올바른 문서의 `파일명`과 `페이지 번호`에서 추출되었는지를 테스트       |
+| **내용 기반** | 질문에 대해 응답 문장 자체가 예상한 의미를 포함하는지를 비교 (정답 메시지 일부 포함 여부 등) |
+
+<br>
+
+### 2. 캐릭터 설정 반영 테스트
+
+**대상 API: PATCH /userCharacter/{userId}**
+
+**목적: 사용자별 캐릭터 말투(tone), 설명 난이도(descriptionLevel), 이름(userCharacterName) 등을 설정**
+
+**입력 예시:**
+
+```json
+{
+  "userCharacterName": "공감형 조언자",
+  "tone": "FRIENDLY",
+  "descriptionLevel": "HIGH"
+}
+```
+- 사용자 캐릭터 설정 요청 시 tone과 descriptionLevel 필드는 아래 값 중 하나를 사용할 수 있습니다.
+- **Tone (말투)**
+
+  | 값          | 설명                     |
+  | ---------- | ---------------------- |
+  | `FORMAL`   | 격식 있는 말투               |
+  | `KINDLY`   | 친절하고 공손한 말투            |
+  | `FRIENDLY` | 캐주얼하고 다정한 말투           |
+  | `TSUNDERE` | 퉁명스럽지만 챙겨주는 말투 (*츤데레*) |
+
+- **DescriptionLevel (설명 난이도)**
+
+  | 값            | 설명                |
+  | ------------ | ----------------- |
+  | `ELEMENTARY` | 초등학생도 이해할 수 있는 수준 |
+  | `MIDDLE`     | 중학생 수준의 설명        |
+  | `HIGH`       | 고등학생 수준의 설명       |
+  | `UNIVERSITY` | 대학생 수준의 상세 설명     |
+  | `EXPERT`     | 전문가 수준의 심화 설명     |
+
+
+  **검증 포인트:**
+- 상태 코드 200 OK
+- 응답 본문에 변경된 속성 반영 여부
 
 
 <br>
@@ -202,26 +250,27 @@ id,username,password,role
 2,student01,password456,ROLE_STUDENT
 ```
 
-#### 2. 채팅 메시지 샘플 (messages.json)
-- 위치: src/main/resources/sample/messages.json
+#### 2. 캐릭터 설정 (character_sample.json)
+- 위치: src/main/resources/sample/character_sample.json
 - 형식: JSON
 
 ```json
-[
+{
   {
-    "sender": "student01",
-    "receiver": "teacher01",
-    "message": "안녕하세요 선생님!",
-    "timestamp": "2024-06-01T10:00:00"
+    "userCharacterName": "공감형 조언자",
+    "tone": "FRIENDLY",
+    "descriptionLevel": "EASY"
   },
+  
   {
-    "sender": "teacher01",
-    "receiver": "student01",
-    "message": "네, 어떤 도움이 필요하신가요?",
-    "timestamp": "2024-06-01T10:01:00"
+    "userCharacterName": "논리적 안내자",
+    "tone": "FORMAL",
+    "descriptionLevel": "EXPERT"
   }
-]
+}
 ```
+- 이 파일을 기반으로 캐릭터 설정 테스트를 반복 수행하고, 채팅 시작 테스트를 통해 사용자 맞춤형 챗봇 응답이 잘 반영되는지 확인할 수 있습니다.
+
 
 <br>
 <br>
