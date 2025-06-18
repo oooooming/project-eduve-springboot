@@ -62,6 +62,9 @@ dependencies {
 
 	// ChatGPT API 연동
 	implementation 'io.github.flashvayne:chatgpt-spring-boot-starter:1.0.4'
+
+	// 테스트
+	testImplementation 'org.springframework.security:spring-security-test'
 }
 
 tasks.named('test') {
