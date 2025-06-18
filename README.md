@@ -104,7 +104,7 @@ eduve/
 git clone https://github.com/TriCode-Ewha/eduve-backend-springboot.git
 cd eduve-backend-springboot
 
-# 2. application.yml 설정
+# 2. application.yml 설정 -> 아래 Database 사용 정보 참고
 cp src/main/resources/application-example.yml src/main/resources/application.yml
 # 설정 후 DB URL, 사용자 정보, JWT 시크릿 등을 입력
 
@@ -147,10 +147,12 @@ sh scripts/start.sh
 이 프로젝트는 JUnit 5 및 Spring Boot Test를 기반으로 테스트를 수행합니다.
 
 #### 테스트 실행
+프로젝트를 클론받은 뒤, 아래 방법으로 Test 실행
+- 주의 : flask 서버가 로컬에서 돌아가는 상태에서 Test 가능
 ```bash
 ./gradlew test
 ```
-또는 IntelliJ에서 src/test/java/.../controller/ 내 테스트 클래스 실행
+IntelliJ에서 src/test/java/.../controller/ 내 테스트 클래스 실행
 
 #### 테스트 구조
 | 디렉토리 경로                         | 설명            |
@@ -293,7 +295,7 @@ mockMvc.perform(patch("/user-character/2")
 
 ## 🗄 Database 사용 정보
 - DBMS: MySQL
-- 설정 예시 (application.yml):
+- application.yml:
 
 ``` yaml
 spring:
